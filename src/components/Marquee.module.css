@@ -21,9 +21,32 @@
   animation-direction: reverse;
 }
 
+/* Les keyframes DOIVENT vivre dans ce module : CSS Modules hashe le nom
+   référencé par `animation:` — définis ailleurs (ex. globals.css), la
+   référence pointe dans le vide et le bandeau reste immobile. */
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
 /* Pause au survol : laisse le temps de lire */
 .bar:hover .track {
   animation-play-state: paused;
+}
+
+/* Le défilement des bandes est l'identité du site : on l'exempte du
+   gel « prefers-reduced-motion » de globals.css (la règle globale passe
+   par `*`, .track est plus spécifique — les deux !important s'annulent).
+   La pause au survol reste disponible pour l'arrêter. */
+@media (prefers-reduced-motion: reduce) {
+  .track {
+    animation-duration: 18s !important;
+    animation-iteration-count: infinite !important;
+  }
 }
 
 .text {

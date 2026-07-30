@@ -53,15 +53,6 @@ input {
   scroll-margin-top: 80px;
 }
 
-@keyframes marquee {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(-50%);
-  }
-}
-
 /* ——— Révélation au scroll ———
    Les grilles marquées data-reveal voient leurs cartes apparaître en cascade
    quand elles entrent à l'écran (IntersectionObserver dans FestivalSite).
