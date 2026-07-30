@@ -21,6 +21,9 @@ type Props = {
   demoMode: boolean;
 };
 
+/** Garde-fou côté navigateur : évite d'envoyer une vidéo ou un RAW de 80 Mo. */
+const MAX_PHOTO_BYTES = 10 * 1024 * 1024;
+
 export default function FestivalSite({ initialData, demoMode }: Props) {
   const supabase = useMemo(() => getBrowserSupabase(), []);
   const [data, setData] = useState(initialData);
@@ -175,11 +178,23 @@ export default function FestivalSite({ initialData, demoMode }: Props) {
 
         // 2. Upload direct navigateur → Cloudinary (le fichier ne passe pas par notre serveur)
         for (const file of files) {
+          if (!file.type.startsWith("image/")) {
+            alert(`« ${file.name} » n'est pas une image.`);
+            continue;
+          }
+          if (file.size > MAX_PHOTO_BYTES) {
+            alert(
+              `« ${file.name} » dépasse ${MAX_PHOTO_BYTES / 1024 / 1024} Mo — compresse-la avant.`,
+            );
+            continue;
+          }
           const fd = new FormData();
           fd.append("file", file);
           fd.append("api_key", sig.apiKey);
           fd.append("timestamp", String(sig.timestamp));
           fd.append("folder", sig.folder);
+          // Signé côté serveur : doit être renvoyé à l'identique
+          fd.append("allowed_formats", sig.allowedFormats);
           fd.append("signature", sig.signature);
           const upRes = await fetch(
             `https://api.cloudinary.com/v1_1/${sig.cloudName}/image/upload`,
