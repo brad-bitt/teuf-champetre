@@ -8,6 +8,9 @@ export default function Nav({ billetterieUrl }: { billetterieUrl: string }) {
         <a href="#lineup" className={styles.link}>
           Programmation
         </a>
+        <a href="#activites" className={styles.link}>
+          Activités
+        </a>
         <a href="#galerie" className={styles.link}>
           Photos
         </a>

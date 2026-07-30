@@ -9,6 +9,14 @@ export type Artist = {
   position: number;
 };
 
+export type Activity = {
+  id: string;
+  name: string;
+  slot: string;
+  place: string;
+  position: number;
+};
+
 export type Photo = {
   id: string;
   /** Identifiant Cloudinary (vide pour les placeholders de démo). */
@@ -28,6 +36,7 @@ export type Settings = {
 export type FestivalData = {
   settings: Settings;
   artists: Artist[];
+  activities: Activity[];
   photos: Photo[];
 };
 

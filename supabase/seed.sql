@@ -16,6 +16,13 @@ insert into public.artists (name, genre, slot, position) values
   ('Tracteur Rave',     'Électro', 'Dimanche · 23h00', 4),
   ('Foin Fatal',        'Rock',    'Dimanche · 20h30', 5);
 
+-- Activités d'attente (remplace-les via le back-office)
+insert into public.activities (name, slot, place, position) values
+  ('Bingo champêtre',     'Samedi · 15h00',   'Sous le chapiteau',  0),
+  ('Loto des champs',     'Samedi · 17h00',   'La grange',          1),
+  ('Tournoi de pétanque', 'Dimanche · 11h00', 'Terrain du haut',    2),
+  ('Chasse au trésor',    'Dimanche · 14h00', 'Tout le champ',      3);
+
 -- ⚠️ IMPORTANT : déclare ton/tes email(s) admin ici.
 -- C'est l'email du compte Google (ou du compte email/mot de passe créé
 -- dans Authentication → Users) qui doit apparaître dans cette table.

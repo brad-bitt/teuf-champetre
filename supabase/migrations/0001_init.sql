@@ -29,6 +29,16 @@ create table public.artists (
   created_at timestamptz not null default now()
 );
 
+-- Activités hors musique (bingo, loto, pétanque…)
+create table public.activities (
+  id         uuid primary key default gen_random_uuid(),
+  name       text not null,
+  slot       text not null default 'Horaire à venir',
+  place      text not null default '',
+  position   int  not null default 0,
+  created_at timestamptz not null default now()
+);
+
 -- Galerie (les fichiers image vivent chez Cloudinary, on ne garde ici que leur identifiant)
 create table public.photos (
   id         uuid primary key default gen_random_uuid(),
@@ -62,20 +72,24 @@ $$;
 
 -- ---------- Row Level Security ----------
 
-alter table public.settings enable row level security;
-alter table public.artists  enable row level security;
-alter table public.photos   enable row level security;
-alter table public.admins   enable row level security;
+alter table public.settings   enable row level security;
+alter table public.artists    enable row level security;
+alter table public.activities enable row level security;
+alter table public.photos     enable row level security;
+alter table public.admins     enable row level security;
 
 -- Lecture publique du contenu du site
-create policy "lecture publique" on public.settings for select using (true);
-create policy "lecture publique" on public.artists  for select using (true);
-create policy "lecture publique" on public.photos   for select using (true);
+create policy "lecture publique" on public.settings   for select using (true);
+create policy "lecture publique" on public.artists    for select using (true);
+create policy "lecture publique" on public.activities for select using (true);
+create policy "lecture publique" on public.photos     for select using (true);
 
 -- Écriture réservée aux admins
 create policy "écriture admin" on public.settings for all
   using (public.is_admin()) with check (public.is_admin());
 create policy "écriture admin" on public.artists for all
+  using (public.is_admin()) with check (public.is_admin());
+create policy "écriture admin" on public.activities for all
   using (public.is_admin()) with check (public.is_admin());
 create policy "écriture admin" on public.photos for all
   using (public.is_admin()) with check (public.is_admin());

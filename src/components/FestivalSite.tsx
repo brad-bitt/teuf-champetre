@@ -3,7 +3,8 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { fetchFestivalData } from "@/lib/data";
 import { getBrowserSupabase } from "@/lib/supabase";
-import type { Artist, ArtistLinks, FestivalData, Photo, Settings } from "@/lib/types";
+import type { Activity, Artist, ArtistLinks, FestivalData, Photo, Settings } from "@/lib/types";
+import Activities from "./Activities";
 import AdminBanner from "./AdminBanner";
 import AdminsModal from "./AdminsModal";
 import EditLinksModal from "./EditLinksModal";
@@ -130,6 +131,31 @@ export default function FestivalSite({ initialData, demoMode }: Props) {
     async (artist: Artist) => {
       if (!supabase || !confirm(`Supprimer ${artist.name} de la programmation ?`)) return;
       const { error } = await supabase.from("artists").delete().eq("id", artist.id);
+      if (error) alert("Suppression impossible : " + error.message);
+      await refresh();
+    },
+    [supabase, refresh],
+  );
+
+  const addActivity = useCallback(
+    async (fields: { name: string; slot: string; place: string }) => {
+      if (!supabase) return;
+      const { error } = await supabase.from("activities").insert({
+        name: fields.name,
+        slot: fields.slot,
+        place: fields.place,
+        position: data.activities.length,
+      });
+      if (error) alert("Ajout impossible : " + error.message);
+      await refresh();
+    },
+    [supabase, data.activities.length, refresh],
+  );
+
+  const removeActivity = useCallback(
+    async (activity: Activity) => {
+      if (!supabase || !confirm(`Supprimer ${activity.name} du programme ?`)) return;
+      const { error } = await supabase.from("activities").delete().eq("id", activity.id);
       if (error) alert("Suppression impossible : " + error.message);
       await refresh();
     },
@@ -264,6 +290,12 @@ export default function FestivalSite({ initialData, demoMode }: Props) {
         onRemove={removeArtist}
         onEditLinks={setEditingArtist}
         onAdd={addArtist}
+      />
+      <Activities
+        activities={data.activities}
+        adminOn={adminOn}
+        onRemove={removeActivity}
+        onAdd={addActivity}
       />
       <Gallery
         photos={data.photos}
