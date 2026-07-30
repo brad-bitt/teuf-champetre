@@ -31,7 +31,7 @@ export default function Activities({ activities, adminOn, onRemove, onAdd }: Pro
       <div className={styles.inner}>
         <div className={styles.headRow}>
           <h2 className={styles.title}>Les activités</h2>
-          <span className={styles.note}>(entre deux concerts, on ne s&apos;ennuie pas)</span>
+          <span className={styles.note}>(pendant que le peloton récupère)</span>
         </div>
 
         <div className={styles.grid} data-reveal="">

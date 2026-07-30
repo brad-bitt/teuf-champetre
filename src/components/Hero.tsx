@@ -24,7 +24,7 @@ export default function Hero({ settings }: { settings: Settings }) {
             rel="noreferrer"
             className={styles.cta}
           >
-            Prendre ma place ↗
+            Rejoindre le peloton ↗
           </a>
           <div className={styles.place}>📍 {settings.lieu}</div>
         </div>

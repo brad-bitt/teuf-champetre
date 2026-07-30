@@ -27,7 +27,7 @@ export default function Gallery({ photos, adminOn, uploading, onRemove, onAdd }:
     <section id="galerie" className={styles.section}>
       <div className={styles.inner}>
         <h2 className={styles.title}>La Teuf en photos</h2>
-        <span className={styles.subBadge}>Souvenirs des éditions passées 📸</span>
+        <span className={styles.subBadge}>Souvenirs des étapes passées 📸</span>
 
         <div className={styles.grid} data-reveal="">
           {shown.map((photo) => (

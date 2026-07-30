@@ -1,7 +1,7 @@
 "use client";
 
 import type { FormEvent } from "react";
-import { LINK_DEFS, TAG_COLORS, type Artist } from "@/lib/types";
+import { LINK_DEFS, MAILLOTS, type Artist } from "@/lib/types";
 import styles from "./LineUp.module.css";
 
 type Props = {
@@ -60,12 +60,18 @@ export default function LineUp({ artists, adminOn, onRemove, onEditLinks, onAdd 
             return (
               <div key={artist.id} className={styles.card}>
                 <div className={styles.cardTop}>
-                  <span
-                    className={styles.tag}
-                    style={{ background: TAG_COLORS[i % TAG_COLORS.length] }}
-                  >
-                    {artist.genre}
-                  </span>
+                  <div className={styles.badges}>
+                    {/* Dossard d'étape (déduit de la position, rien en base) */}
+                    <span className={styles.stage}>Étape {i + 1}</span>
+                    {/* Genre aux couleurs d'un maillot du Tour */}
+                    <span
+                      className={styles.tag}
+                      style={MAILLOTS[i % MAILLOTS.length].style}
+                      title={MAILLOTS[i % MAILLOTS.length].title}
+                    >
+                      {artist.genre}
+                    </span>
+                  </div>
                   {adminOn && (
                     <button
                       type="button"

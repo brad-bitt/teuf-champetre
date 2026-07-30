@@ -1,6 +1,7 @@
 import styles from "./Marquee.module.css";
 
-const TEXT = "Vélo ★ Maillot jaune ★ Électro ★ Peloton ★ Rock ★ Échappée ★ Pop ★ Teuf ★ ";
+const TEXT =
+  "Vélo ★ Maillot jaune ★ Électro ★ Flamme rouge ★ Peloton ★ Rock ★ Échappée ★ Pop ★ Lanterne rouge ★ Teuf ★ Col de la Grange ★ ";
 
 export default function Marquee() {
   return (

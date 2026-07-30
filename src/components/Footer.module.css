@@ -1,7 +1,14 @@
 .footer {
   background: var(--ink);
   color: var(--bg);
-  padding: 48px 20px 24px;
+  padding: 0 20px 24px;
+}
+
+/* Damier pleine largeur au sommet du footer (compense le padding latéral) */
+.finishLine {
+  height: 22px;
+  margin: 0 -20px 48px;
+  background: repeating-conic-gradient(var(--ink) 0% 25%, #fff 0% 50%) 0 0 / 22px 22px;
 }
 
 .inner {
