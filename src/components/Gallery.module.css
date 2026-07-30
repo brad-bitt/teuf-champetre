@@ -47,6 +47,11 @@
   background: #fff;
   box-shadow: 6px 6px 0 var(--ink);
   position: relative;
+  transition: transform 0.12s ease-out, box-shadow 0.12s ease-out;
+}
+.figure:hover {
+  transform: translate(-3px, -3px) rotate(0.4deg);
+  box-shadow: 9px 9px 0 var(--ink);
 }
 
 .img {

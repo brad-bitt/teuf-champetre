@@ -34,7 +34,7 @@ export default function Activities({ activities, adminOn, onRemove, onAdd }: Pro
           <span className={styles.note}>(entre deux concerts, on ne s&apos;ennuie pas)</span>
         </div>
 
-        <div className={styles.grid}>
+        <div className={styles.grid} data-reveal="">
           {activities.length === 0 && (
             <div className={styles.card}>
               <div className={styles.name}>Programme en cours de mijotage…</div>

@@ -45,7 +45,7 @@ export default function LineUp({ artists, adminOn, onRemove, onEditLinks, onAdd 
           <span className={styles.note}>(le parcours peut encore bouger, restez chauds)</span>
         </div>
 
-        <div className={styles.grid}>
+        <div className={styles.grid} data-reveal="">
           {artists.length === 0 && (
             <div className={styles.card}>
               <div className={styles.name}>Programmation en cours…</div>

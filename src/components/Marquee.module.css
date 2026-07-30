@@ -16,6 +16,11 @@
   gap: 0;
 }
 
+/* Pause au survol : laisse le temps de lire */
+.bar:hover .track {
+  animation-play-state: paused;
+}
+
 .text {
   padding-right: 32px;
   color: var(--pink);

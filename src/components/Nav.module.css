@@ -33,22 +33,38 @@
   padding: 8px 14px;
   border: 3px solid var(--ink);
   box-shadow: 4px 4px 0 var(--ink);
+  transition: transform 0.1s ease-out, box-shadow 0.1s ease-out,
+    background 0.1s ease-out, color 0.1s ease-out;
 }
 
 .link {
   background: #fff;
   color: var(--ink);
 }
+/* Les liens se soulèvent… */
 .link:hover {
   background: var(--yellow);
   color: var(--ink);
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 var(--ink);
+}
+.link:active {
+  transform: translate(0, 0);
+  box-shadow: 4px 4px 0 var(--ink);
 }
 
 .ticket {
   background: var(--orange);
   color: #fff;
 }
+/* …le bouton billetterie s'enfonce, comme le CTA du hero. */
 .ticket:hover {
   background: var(--ink);
   color: var(--yellow);
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 var(--ink);
+}
+.ticket:active {
+  transform: translate(4px, 4px);
+  box-shadow: 0 0 0 var(--ink);
 }

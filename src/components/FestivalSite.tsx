@@ -44,6 +44,29 @@ export default function FestivalSite({ initialData, demoMode }: Props) {
     }
   }, [supabase]);
 
+  // Révélation au scroll : les grilles marquées data-reveal passent à "in"
+  // quand elles entrent à l'écran (styles dans globals.css). Le marqueur
+  // html[data-motion] garantit que sans JS, rien n'est jamais masqué.
+  useEffect(() => {
+    document.documentElement.dataset.motion = "on";
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            entry.target.setAttribute("data-reveal", "in");
+            observer.unobserve(entry.target);
+          }
+        }
+      },
+      // Déclenche un peu avant que la grille soit vraiment visible
+      { rootMargin: "0px 0px -10% 0px" },
+    );
+    document
+      .querySelectorAll('[data-reveal]:not([data-reveal="in"])')
+      .forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, [data]);
+
   // Connexion : quand une session apparaît (mot de passe ou retour OAuth Google),
   // on vérifie les droits admin ; sans droits, on déconnecte immédiatement.
   useEffect(() => {

@@ -29,7 +29,7 @@ export default function Gallery({ photos, adminOn, uploading, onRemove, onAdd }:
         <h2 className={styles.title}>La Teuf en photos</h2>
         <span className={styles.subBadge}>Souvenirs des éditions passées 📸</span>
 
-        <div className={styles.grid}>
+        <div className={styles.grid} data-reveal="">
           {shown.map((photo) => (
             <figure key={photo.id} className={styles.figure}>
               {photo.url ? (
