@@ -1,10 +1,12 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { photoUrl } from "./cloudinary";
 import { DEMO_DATA } from "./demo-data";
 import type { FestivalData, Photo } from "./types";
 
 /**
  * Charge settings + artistes + photos depuis Supabase.
  * Utilisé côté serveur (rendu initial) et côté client (refresh après une action admin).
+ * Les images elles-mêmes sont servies par Cloudinary (URL construite depuis public_id).
  */
 export async function fetchFestivalData(supabase: SupabaseClient): Promise<FestivalData> {
   const [settingsRes, artistsRes, photosRes] = await Promise.all([
@@ -18,9 +20,9 @@ export async function fetchFestivalData(supabase: SupabaseClient): Promise<Festi
 
   const photos: Photo[] = (photosRes.data ?? []).map((p) => ({
     id: p.id,
-    path: p.path,
+    publicId: p.public_id,
     label: p.label ?? "",
-    url: supabase.storage.from("photos").getPublicUrl(p.path).data.publicUrl,
+    url: photoUrl(p.public_id),
   }));
 
   return {

@@ -11,10 +11,10 @@ export type Artist = {
 
 export type Photo = {
   id: string;
-  /** Chemin dans le bucket Supabase Storage (vide pour les placeholders de démo). */
-  path: string;
+  /** Identifiant Cloudinary (vide pour les placeholders de démo). */
+  publicId: string;
   label: string;
-  /** URL publique de l'image — null ⇒ placeholder rayé façon maquette. */
+  /** URL d'affichage optimisée — null ⇒ placeholder rayé façon maquette. */
   url: string | null;
 };
 

@@ -142,45 +142,87 @@ export default function FestivalSite({ initialData, demoMode }: Props) {
     [supabase, refresh],
   );
 
+  /** Jeton de session pour authentifier les appels aux routes API. */
+  const getAccessToken = useCallback(async () => {
+    if (!supabase) return null;
+    const { data } = await supabase.auth.getSession();
+    return data.session?.access_token ?? null;
+  }, [supabase]);
+
   const addPhotos = useCallback(
     async (files: File[]) => {
       if (!supabase) return;
       setUploading(true);
       try {
+        const token = await getAccessToken();
+        if (!token) {
+          alert("Session expirée — reconnecte-toi.");
+          return;
+        }
+        // 1. Signature d'upload délivrée par notre API (admins uniquement)
+        const sigRes = await fetch("/api/photos/sign-upload", {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!sigRes.ok) {
+          const body = await sigRes.json().catch(() => null);
+          alert(body?.error ?? "Impossible de préparer l'envoi des photos.");
+          return;
+        }
+        const sig = await sigRes.json();
+
+        // 2. Upload direct navigateur → Cloudinary (le fichier ne passe pas par notre serveur)
         for (const file of files) {
-          const ext = file.name.includes(".") ? file.name.split(".").pop() : "jpg";
-          const path = `${crypto.randomUUID()}.${ext}`;
-          const { error: upErr } = await supabase.storage.from("photos").upload(path, file);
-          if (upErr) {
-            alert(`Envoi de « ${file.name} » impossible : ${upErr.message}`);
+          const fd = new FormData();
+          fd.append("file", file);
+          fd.append("api_key", sig.apiKey);
+          fd.append("timestamp", String(sig.timestamp));
+          fd.append("folder", sig.folder);
+          fd.append("signature", sig.signature);
+          const upRes = await fetch(
+            `https://api.cloudinary.com/v1_1/${sig.cloudName}/image/upload`,
+            { method: "POST", body: fd },
+          );
+          if (!upRes.ok) {
+            alert(`Envoi de « ${file.name} » impossible.`);
             continue;
           }
-          const { error: insErr } = await supabase
+          const uploaded = await upRes.json();
+
+          // 3. Référence en base (protégée par RLS)
+          const { error } = await supabase
             .from("photos")
-            .insert({ path, label: file.name });
-          if (insErr) alert(`Enregistrement de « ${file.name} » impossible : ${insErr.message}`);
+            .insert({ public_id: uploaded.public_id, label: file.name });
+          if (error) alert(`Enregistrement de « ${file.name} » impossible : ${error.message}`);
         }
       } finally {
         setUploading(false);
       }
       await refresh();
     },
-    [supabase, refresh],
+    [supabase, getAccessToken, refresh],
   );
 
   const removePhoto = useCallback(
     async (photo: Photo) => {
       if (!supabase || !confirm("Supprimer cette photo ?")) return;
-      const { error } = await supabase.from("photos").delete().eq("id", photo.id);
-      if (error) {
-        alert("Suppression impossible : " + error.message);
-      } else if (photo.path) {
-        // Nettoie aussi le fichier du bucket (best effort)
-        await supabase.storage.from("photos").remove([photo.path]);
+      const token = await getAccessToken();
+      if (!token) {
+        alert("Session expirée — reconnecte-toi.");
+        return;
+      }
+      const res = await fetch("/api/photos/delete", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ id: photo.id }),
+      });
+      if (!res.ok) {
+        const body = await res.json().catch(() => null);
+        alert(body?.error ?? "Suppression impossible.");
       }
       await refresh();
     },
-    [supabase, refresh],
+    [supabase, getAccessToken, refresh],
   );
 
   const saveSettings = useCallback(

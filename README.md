@@ -5,12 +5,14 @@ back-office intégré pour gérer la programmation, la galerie photos et les inf
 
 Implémenté depuis la maquette Claude Design archivée dans [`design/`](design/).
 
-## Stack
+## Stack (100 % gratuite)
 
 - **[Next.js](https://nextjs.org)** (App Router) + **TypeScript** + CSS Modules
-- **[Supabase](https://supabase.com)** : base de données (programmation, infos), Storage
-  (photos) et authentification (email/mot de passe + Google)
-- Déployable sur **Vercel** en un clic
+- **[Supabase](https://supabase.com)** (plan Free) : base de données (programmation, infos,
+  liste des admins) et authentification (email/mot de passe + Google)
+- **[Cloudinary](https://cloudinary.com)** (plan Free) : hébergement des photos, avec
+  optimisation automatique (WebP/AVIF, compression, redimensionnement)
+- **Vercel** (plan Hobby) pour l'hébergement, déploiement auto à chaque push
 
 ## Comment ça marche
 
@@ -24,6 +26,9 @@ Implémenté depuis la maquette Claude Design archivée dans [`design/`](design/
 - **Sécurité** : n'importe qui peut se connecter avec Google, mais seuls les emails listés
   dans la table `admins` ont le droit de modifier quoi que ce soit (politiques RLS côté
   Supabase — le front ne fait que refléter ces droits).
+- **Photos** : uploadées directement du navigateur vers Cloudinary avec une signature
+  délivrée par notre API aux seuls admins ; servies optimisées (`f_auto,q_auto`). La
+  suppression passe aussi par l'API (la clé secrète Cloudinary ne quitte jamais le serveur).
 - **Mode démo** : tant que Supabase n'est pas configuré, le site affiche les données
   d'exemple et le back-office est désactivé.
 
@@ -38,7 +43,7 @@ npm run dev          # → http://localhost:3000 (mode démo sans .env.local)
 
 1. **Créer le projet** — [supabase.com](https://supabase.com) → *New project* (plan gratuit).
 2. **Créer le schéma** — dashboard → *SQL Editor* → colle et exécute :
-   1. [`supabase/migrations/0001_init.sql`](supabase/migrations/0001_init.sql) (tables, sécurité RLS, bucket photos)
+   1. [`supabase/migrations/0001_init.sql`](supabase/migrations/0001_init.sql) (tables + sécurité RLS)
    2. [`supabase/seed.sql`](supabase/seed.sql) (infos par défaut + line-up d'attente)
 3. **Déclarer ton email admin** — toujours dans le SQL Editor :
    ```sql
@@ -61,13 +66,27 @@ npm run dev          # → http://localhost:3000 (mode démo sans .env.local)
    Pense aussi à désactiver les inscriptions publiques si tu ne veux que des comptes
    créés à la main : *Authentication → Sign In / Up → Allow new users to sign up* → off.
 
+## Configurer Cloudinary (pour les photos)
+
+1. **Créer le compte** — [cloudinary.com](https://cloudinary.com) → inscription gratuite
+   (choisis « Programmable Media »).
+2. **Récupérer les 3 clés** — sur la page d'accueil du dashboard, encart **API Keys**
+   (ou *Settings → API Keys*) : **Cloud name**, **API Key**, **API Secret**.
+3. **Les renseigner** dans `.env.local` :
+   `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET`.
+   Seul le cloud name est public — la clé et le secret ne servent que côté serveur.
+
+Rien d'autre à configurer : les uploads sont signés par le serveur (pas de preset à créer),
+et les photos atterrissent dans le dossier `teuf-champetre` de ta médiathèque Cloudinary.
+
 ## Déployer sur Vercel
 
 1. Pousse ce repo sur GitHub.
 2. [vercel.com](https://vercel.com) → *Import project* → sélectionne le repo (framework
    détecté automatiquement : Next.js).
-3. Ajoute les deux variables d'environnement `NEXT_PUBLIC_SUPABASE_URL` et
-   `NEXT_PUBLIC_SUPABASE_ANON_KEY` dans les settings du projet Vercel.
+3. Ajoute les cinq variables d'environnement de `.env.example` dans les settings du
+   projet Vercel : `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`,
+   `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET`.
 4. Dans Supabase, ajoute l'URL du site déployé dans *Authentication → URL Configuration*
    (Site URL + Redirect URLs) pour que le retour de connexion Google fonctionne en prod.
 
@@ -79,10 +98,11 @@ Chaque `git push` sur `main` redéploie automatiquement le site.
 ├── design/                  # Archive de la maquette Claude Design (référence visuelle)
 ├── src/
 │   ├── app/                 # Layout (fonts, metadata), page d'accueil, styles globaux
+│   │   └── api/photos/      # Routes API : signature d'upload + suppression Cloudinary
 │   ├── components/          # Sections du site + modales du back-office
-│   └── lib/                 # Client Supabase, types, chargement des données, données démo
+│   └── lib/                 # Clients Supabase/Cloudinary, types, données, helpers serveur
 ├── supabase/
-│   ├── migrations/          # Schéma SQL (tables + RLS + Storage)
+│   ├── migrations/          # Schéma SQL (tables + RLS)
 │   └── seed.sql             # Données initiales + déclaration des admins
 └── .env.example             # Modèle de configuration (à copier vers .env.local)
 ```

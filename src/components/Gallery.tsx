@@ -61,7 +61,7 @@ export default function Gallery({ photos, adminOn, uploading, onRemove, onAdd }:
           <label className={styles.uploadZone}>
             {uploading ? "⏳ Envoi en cours…" : "📷 Ajouter des photos (clique ou dépose)"}
             <span className={styles.uploadHint}>
-              Les photos sont enregistrées dans Supabase Storage, visibles par tout le monde
+              Optimisées et servies par Cloudinary — visibles par tout le monde
             </span>
             <input
               type="file"

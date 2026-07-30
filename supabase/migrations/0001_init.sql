@@ -29,10 +29,10 @@ create table public.artists (
   created_at timestamptz not null default now()
 );
 
--- Galerie (les fichiers vivent dans le bucket Storage « photos »)
+-- Galerie (les fichiers image vivent chez Cloudinary, on ne garde ici que leur identifiant)
 create table public.photos (
   id         uuid primary key default gen_random_uuid(),
-  path       text not null,
+  public_id  text not null,
   label      text not null default '',
   created_at timestamptz not null default now()
 );
@@ -83,18 +83,3 @@ create policy "écriture admin" on public.photos for all
 -- La liste des admins n'est lisible que par un admin (aucune écriture côté client :
 -- on ajoute les emails via le SQL Editor ou le dashboard).
 create policy "lecture admin" on public.admins for select using (public.is_admin());
-
--- ---------- Storage : bucket public « photos » ----------
-
-insert into storage.buckets (id, name, public)
-values ('photos', 'photos', true)
-on conflict (id) do nothing;
-
-create policy "photos lecture publique" on storage.objects
-  for select using (bucket_id = 'photos');
-
-create policy "photos upload admin" on storage.objects
-  for insert with check (bucket_id = 'photos' and public.is_admin());
-
-create policy "photos suppression admin" on storage.objects
-  for delete using (bucket_id = 'photos' and public.is_admin());
