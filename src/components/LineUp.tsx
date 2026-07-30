@@ -19,6 +19,9 @@ type Props = {
   }) => void;
 };
 
+/** Fonds des cartes, en rotation — tout sauf le jaune de la section. */
+const CARD_BGS = ["var(--cream)", "var(--blue)", "var(--pink)", "var(--green)"];
+
 export default function LineUp({ artists, adminOn, onRemove, onEditLinks, onAdd }: Props) {
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -47,7 +50,7 @@ export default function LineUp({ artists, adminOn, onRemove, onEditLinks, onAdd 
 
         <div className={styles.grid} data-reveal="">
           {artists.length === 0 && (
-            <div className={styles.card}>
+            <div className={styles.card} style={{ background: CARD_BGS[0] }}>
               <div className={styles.name}>Programmation en cours…</div>
               <div className={styles.slot}>Le peloton s&apos;échauffe, reviens bientôt !</div>
             </div>
@@ -58,7 +61,11 @@ export default function LineUp({ artists, adminOn, onRemove, onEditLinks, onAdd 
               url: artist[key] as string,
             }));
             return (
-              <div key={artist.id} className={styles.card}>
+              <div
+                key={artist.id}
+                className={styles.card}
+                style={{ background: CARD_BGS[i % CARD_BGS.length] }}
+              >
                 <div className={styles.cardTop}>
                   <div className={styles.badges}>
                     {/* Dossard d'étape (déduit de la position, rien en base) */}

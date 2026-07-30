@@ -314,11 +314,20 @@ export default function FestivalSite({ initialData, demoMode }: Props) {
         onEditLinks={setEditingArtist}
         onAdd={addArtist}
       />
+      <Marquee
+        text={"Bingo ★ Loto ★ Pétanque ★ Ravitaillement ★ Chasse au trésor ★ Buvette ★ Zone de récup ★ "}
+        color="var(--blue)"
+        reverse
+      />
       <Activities
         activities={data.activities}
         adminOn={adminOn}
         onRemove={removeActivity}
         onAdd={addActivity}
+      />
+      <Marquee
+        text={"Flash ★ Pogo ★ Golden hour ★ Souvenirs ★ Confettis ★ Pellicule ★ Photo finish ★ "}
+        color="var(--green)"
       />
       <Gallery
         photos={data.photos}

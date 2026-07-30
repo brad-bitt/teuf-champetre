@@ -11,6 +11,9 @@ type Props = {
   onAdd: (fields: { name: string; slot: string; place: string }) => void;
 };
 
+/** Fonds des cartes, en rotation — tout sauf le bleu de la section. */
+const CARD_BGS = ["var(--cream)", "var(--yellow)", "var(--pink)", "var(--green)"];
+
 export default function Activities({ activities, adminOn, onRemove, onAdd }: Props) {
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -36,13 +39,17 @@ export default function Activities({ activities, adminOn, onRemove, onAdd }: Pro
 
         <div className={styles.grid} data-reveal="">
           {activities.length === 0 && (
-            <div className={styles.card}>
+            <div className={styles.card} style={{ background: CARD_BGS[0] }}>
               <div className={styles.name}>Programme en cours de mijotage…</div>
               <div className={styles.slot}>Bingo ? Pétanque ? Reviens bientôt !</div>
             </div>
           )}
           {activities.map((activity, i) => (
-            <div key={activity.id} className={styles.card}>
+            <div
+              key={activity.id}
+              className={styles.card}
+              style={{ background: CARD_BGS[i % CARD_BGS.length] }}
+            >
               <div className={styles.cardTop}>
                 {activity.place ? (
                   <span
