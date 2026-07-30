@@ -5,6 +5,7 @@ import { fetchFestivalData } from "@/lib/data";
 import { getBrowserSupabase } from "@/lib/supabase";
 import type { Artist, ArtistLinks, FestivalData, Photo, Settings } from "@/lib/types";
 import AdminBanner from "./AdminBanner";
+import AdminsModal from "./AdminsModal";
 import EditLinksModal from "./EditLinksModal";
 import Footer from "./Footer";
 import Gallery from "./Gallery";
@@ -26,6 +27,7 @@ export default function FestivalSite({ initialData, demoMode }: Props) {
   const [adminOn, setAdminOn] = useState(false);
   const [loginOpen, setLoginOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [adminsOpen, setAdminsOpen] = useState(false);
   const [editingArtist, setEditingArtist] = useState<Artist | null>(null);
   const [uploading, setUploading] = useState(false);
 
@@ -258,7 +260,11 @@ export default function FestivalSite({ initialData, demoMode }: Props) {
       <Footer settings={data.settings} adminOn={adminOn} onAdminClick={handleAdminClick} />
 
       {adminOn && (
-        <AdminBanner onOpenSettings={() => setSettingsOpen(true)} onSignOut={signOut} />
+        <AdminBanner
+          onOpenSettings={() => setSettingsOpen(true)}
+          onOpenAdmins={() => setAdminsOpen(true)}
+          onSignOut={signOut}
+        />
       )}
       {loginOpen && (
         <LoginModal supabase={supabase} demoMode={demoMode} onClose={() => setLoginOpen(false)} />
@@ -276,6 +282,9 @@ export default function FestivalSite({ initialData, demoMode }: Props) {
           onSave={saveLinks}
           onClose={() => setEditingArtist(null)}
         />
+      )}
+      {adminsOpen && supabase && (
+        <AdminsModal supabase={supabase} onClose={() => setAdminsOpen(false)} />
       )}
     </div>
   );

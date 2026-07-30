@@ -1,0 +1,57 @@
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  border: 3px solid var(--ink);
+  background: #fff;
+  padding: 8px 12px;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.email {
+  overflow-wrap: anywhere;
+}
+
+.selfBadge {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  background: var(--yellow);
+  border: 2px solid var(--ink);
+  padding: 2px 6px;
+  margin-left: 6px;
+}
+
+.removeBtn {
+  flex-shrink: 0;
+  border: 2px solid var(--ink);
+  background: var(--orange);
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 4px 10px;
+}
+.removeBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.addRow {
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+}
+
+.field {
+  flex: 1;
+}
