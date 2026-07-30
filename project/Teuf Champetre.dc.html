@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  html, body { margin: 0; padding: 0; background: #f5f0e6; }
+  * { box-sizing: border-box; }
+  a { color: #111; } a:hover { color: #e4572e; }
+  @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+</style>
+</helmet>
+
+<div style="font-family: 'Space Grotesk', sans-serif; color: #111; background: #f5f0e6; min-height: 100vh;">
+
+  <!-- NAV -->
+  <nav style="display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 20px; background: #f5f0e6; border-bottom: 4px solid #111; position: sticky; top: 0; z-index: 50; flex-wrap: wrap;">
+    <div style="font-family: 'Archivo Black', sans-serif; font-size: 20px; letter-spacing: -0.5px; text-transform: uppercase;">Teuf Champêtre</div>
+    <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+      <a href="#lineup" style="text-decoration: none; font-weight: 700; padding: 8px 14px; border: 3px solid #111; background: #fff; box-shadow: 4px 4px 0 #111;" style-hover="background: #ffd23f; color: #111;">Programmation</a>
+      <a href="#galerie" style="text-decoration: none; font-weight: 700; padding: 8px 14px; border: 3px solid #111; background: #fff; box-shadow: 4px 4px 0 #111;" style-hover="background: #ffd23f; color: #111;">Photos</a>
+      <a href="{{ billetterieUrl }}" target="_blank" style="text-decoration: none; font-weight: 700; padding: 8px 14px; border: 3px solid #111; background: #e4572e; color: #fff; box-shadow: 4px 4px 0 #111;" style-hover="background: #111; color: #ffd23f;">Billetterie ↗</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <header style="padding: 56px 20px 64px; border-bottom: 4px solid #111; background: #ff5fa8; position: relative; overflow: hidden;">
+    <div style="max-width: 1100px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px; position: relative; z-index: 1;">
+      <div style="display: inline-flex; align-self: flex-start; gap: 8px; align-items: center; background: #111; color: #ffd23f; padding: 8px 16px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; transform: rotate(-2deg);">{{ edition }} · {{ dates }} · 🚴 Thème vélo</div>
+      <h1 style="font-family: 'Archivo Black', sans-serif; font-size: clamp(52px, 11vw, 140px); line-height: 0.92; margin: 0; text-transform: uppercase; letter-spacing: -2px;">Teuf<br>Champêtre</h1>
+      <p style="font-size: clamp(18px, 2.5vw, 26px); font-weight: 500; margin: 0; max-width: 640px;">Cette année on enfile le maillot : la Teuf passe en mode Tour de France. Électro qui tape, rock qui transpire, pop qui colle — et un peloton de copains dans un champ.</p>
+      <div style="display: flex; gap: 16px; flex-wrap: wrap;">
+        <a href="{{ billetterieUrl }}" target="_blank" style="text-decoration: none; font-family: 'Archivo Black', sans-serif; font-size: clamp(18px, 2.5vw, 26px); text-transform: uppercase; padding: 18px 32px; background: #e4572e; color: #fff; border: 4px solid #111; box-shadow: 8px 8px 0 #111; display: inline-block;" style-hover="background: #111; color: #ffd23f; box-shadow: 4px 4px 0 #111; transform: translate(4px, 4px);" style-active="box-shadow: 0 0 0 #111; transform: translate(8px, 8px);">Prendre ma place ↗</a>
+        <div style="display: flex; align-items: center; padding: 18px 24px; background: #fff; border: 4px solid #111; box-shadow: 8px 8px 0 #111; font-weight: 700;">📍 {{ lieu }}</div>
+      </div>
+    </div>
+    <div style="position: absolute; right: -40px; top: -40px; width: 200px; height: 200px; background: radial-gradient(circle, #e4572e 26%, transparent 27%) 0 0 / 48px 48px #fff; border: 4px solid #111; border-radius: 50%; transform: rotate(15deg);" title="maillot à pois"></div>
+    <div style="position: absolute; right: 60px; bottom: -60px; width: 140px; height: 140px; background: #ffd23f; border: 4px solid #111; border-radius: 50%; z-index: 0;"></div>
+    <div style="position: absolute; right: 84px; bottom: -6px; font-size: 56px; transform: rotate(-8deg); z-index: 0;">🚴</div>
+  </header>
+
+  <!-- MARQUEE -->
+  <div style="background: #111; color: #f5f0e6; overflow: hidden; padding: 12px 0; border-bottom: 4px solid #111;">
+    <div style="display: inline-flex; white-space: nowrap; animation: marquee 18s linear infinite; font-family: 'Archivo Black', sans-serif; text-transform: uppercase; font-size: 20px; gap: 0;">
+      <span style="padding-right: 32px; color: #ff5fa8;">Vélo ★ Maillot jaune ★ Électro ★ Peloton ★ Rock ★ Échappée ★ Pop ★ Teuf ★&nbsp;</span>
+      <span style="padding-right: 32px; color: #ff5fa8;">Vélo ★ Maillot jaune ★ Électro ★ Peloton ★ Rock ★ Échappée ★ Pop ★ Teuf ★&nbsp;</span>
+    </div>
+  </div>
+
+  <!-- LINE-UP -->
+  <section id="lineup" style="padding: 64px 20px; border-bottom: 4px solid #111; background: #f5f0e6;" data-screen-label="Programmation">
+    <div style="max-width: 1100px; margin: 0 auto; display: flex; flex-direction: column; gap: 32px;">
+      <div style="display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap;">
+        <h2 style="font-family: 'Archivo Black', sans-serif; font-size: clamp(36px, 6vw, 64px); margin: 0; text-transform: uppercase; background: #a6e05a; border: 4px solid #111; box-shadow: 6px 6px 0 #111; padding: 8px 20px; transform: rotate(-1deg);">Les étapes</h2>
+        <span style="font-weight: 700; font-size: 18px;">(le parcours peut encore bouger, restez chauds)</span>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;">
+        <sc-for list="{{ artists }}" as="artist" hint-placeholder-count="6">
+          <div style="border: 4px solid #111; background: #fff; box-shadow: 6px 6px 0 #111; padding: 20px; display: flex; flex-direction: column; gap: 8px; position: relative;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;">
+              <span style="background: {{ artist.tagColor }}; border: 3px solid #111; padding: 4px 10px; font-weight: 700; font-size: 13px; text-transform: uppercase;">{{ artist.genre }}</span>
+              <sc-if value="{{ adminOn }}" hint-placeholder-val="{{ false }}">
+                <button onClick="{{ artist.remove }}" style="border: 3px solid #111; background: #e4572e; color: #fff; font-weight: 700; cursor: pointer; padding: 4px 10px; font-family: inherit;">✕</button>
+              </sc-if>
+            </div>
+            <div style="font-family: 'Archivo Black', sans-serif; font-size: 26px; text-transform: uppercase; line-height: 1;">{{ artist.name }}</div>
+            <div style="font-weight: 500; color: #444;">{{ artist.slot }}</div>
+            <sc-if value="{{ artist.hasLinks }}" hint-placeholder-val="{{ false }}">
+              <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px;">
+                <sc-for list="{{ artist.links }}" as="link" hint-placeholder-count="0">
+                  <a href="{{ link.url }}" target="_blank" style="text-decoration: none; font-weight: 700; font-size: 13px; padding: 4px 10px; border: 2px solid #111; background: #f5f0e6; color: #111; box-shadow: 2px 2px 0 #111;" style-hover="background: #ffd23f; color: #111;">{{ link.label }} ↗</a>
+                </sc-for>
+              </div>
+            </sc-if>
+            <sc-if value="{{ adminOn }}" hint-placeholder-val="{{ false }}">
+              <button onClick="{{ artist.editLinks }}" style="align-self: flex-start; border: 2px solid #111; background: #fff; font-weight: 700; font-size: 12px; cursor: pointer; padding: 4px 10px; font-family: inherit; margin-top: 4px;">🔗 Modifier les liens</button>
+            </sc-if>
+          </div>
+        </sc-for>
+      </div>
+      <sc-if value="{{ adminOn }}" hint-placeholder-val="{{ false }}">
+        <form onSubmit="{{ addArtist }}" style="border: 4px dashed #111; background: #fffbe8; padding: 20px; display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end;">
+          <label style="display: flex; flex-direction: column; gap: 4px; font-weight: 700; font-size: 14px;">Nom
+            <input name="name" required placeholder="DJ Tracteur" style="border: 3px solid #111; padding: 10px; font-family: inherit; font-size: 16px; background: #fff;">
+          </label>
+          <label style="display: flex; flex-direction: column; gap: 4px; font-weight: 700; font-size: 14px;">Genre
+            <input name="genre" placeholder="Électro" style="border: 3px solid #111; padding: 10px; font-family: inherit; font-size: 16px; background: #fff;">
+          </label>
+          <label style="display: flex; flex-direction: column; gap: 4px; font-weight: 700; font-size: 14px;">Horaire
+            <input name="slot" placeholder="Samedi · 23h00" style="border: 3px solid #111; padding: 10px; font-family: inherit; font-size: 16px; background: #fff;">
+          </label>
+          <label style="display: flex; flex-direction: column; gap: 4px; font-weight: 700; font-size: 14px;">Spotify
+            <input name="spotify" placeholder="https://open.spotify.com/..." style="border: 3px solid #111; padding: 10px; font-family: inherit; font-size: 16px; background: #fff; width: 220px;">
+          </label>
+          <label style="display: flex; flex-direction: column; gap: 4px; font-weight: 700; font-size: 14px;">SoundCloud
+            <input name="soundcloud" placeholder="https://soundcloud.com/..." style="border: 3px solid #111; padding: 10px; font-family: inherit; font-size: 16px; background: #fff; width: 220px;">
+          </label>
+          <label style="display: flex; flex-direction: column; gap: 4px; font-weight: 700; font-size: 14px;">Instagram
+            <input name="instagram" placeholder="https://instagram.com/..." style="border: 3px solid #111; padding: 10px; font-family: inherit; font-size: 16px; background: #fff; width: 220px;">
+          </label>
+          <button type="submit" style="border: 3px solid #111; background: #111; color: #ffd23f; font-weight: 700; font-family: inherit; font-size: 16px; padding: 12px 20px; cursor: pointer; box-shadow: 4px 4px 0 #999;">+ Ajouter l'artiste</button>
+        </form>
+      </sc-if>
+    </div>
+  </section>
+
+  <!-- GALERIE -->
+  <section id="galerie" style="padding: 64px 20px; border-bottom: 4px solid #111; background: #a6e05a;" data-screen-label="Galerie">
+    <div style="max-width: 1100px; margin: 0 auto; display: flex; flex-direction: column; gap: 32px;">
+      <h2 style="font-family: 'Archivo Black', sans-serif; font-size: clamp(36px, 6vw, 64px); margin: 0; text-transform: uppercase; background: #ffd23f; border: 4px solid #111; box-shadow: 6px 6px 0 #111; padding: 8px 20px; align-self: flex-start; transform: rotate(1deg);">La Teuf en photos</h2>
+      <span style="align-self: flex-start; background: #ff5fa8; border: 3px solid #111; padding: 6px 14px; font-weight: 700; transform: rotate(-1deg); margin-top: -20px;">Souvenirs des éditions passées 📸</span>
+      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px;">
+        <sc-for list="{{ photos }}" as="photo" hint-placeholder-count="6">
+          <figure style="margin: 0; border: 4px solid #111; background: #fff; box-shadow: 6px 6px 0 #111; position: relative;">
+            <sc-if value="{{ photo.hasSrc }}" hint-placeholder-val="{{ false }}">
+              <div role="img" aria-label="{{ photo.label }}" style="width: 100%; height: 220px; background-image: {{ photo.bgImage }}; background-size: cover; background-position: center;"></div>
+            </sc-if>
+            <sc-if value="{{ photo.isPlaceholder }}" hint-placeholder-val="{{ true }}">
+              <div style="width: 100%; height: 220px; background: repeating-linear-gradient(45deg, #f5f0e6, #f5f0e6 12px, #e8e0cc 12px, #e8e0cc 24px); display: flex; align-items: center; justify-content: center;">
+                <span style="font-family: monospace; font-size: 13px; background: #fff; border: 2px solid #111; padding: 4px 10px;">{{ photo.label }}</span>
+              </div>
+            </sc-if>
+            <sc-if value="{{ adminOn }}" hint-placeholder-val="{{ false }}">
+              <button onClick="{{ photo.remove }}" style="position: absolute; top: 8px; right: 8px; border: 3px solid #111; background: #e4572e; color: #fff; font-weight: 700; cursor: pointer; padding: 6px 12px; font-family: inherit;">✕ Supprimer</button>
+            </sc-if>
+          </figure>
+        </sc-for>
+      </div>
+      <sc-if value="{{ adminOn }}" hint-placeholder-val="{{ false }}">
+        <label style="border: 4px dashed #111; background: #fffbe8; padding: 32px; display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; font-weight: 700; font-size: 18px;">
+          📷 Ajouter des photos (clique ou dépose)
+          <span style="font-weight: 400; font-size: 14px; color: #555;">Les photos sont enregistrées dans ce navigateur</span>
+          <input type="file" accept="image/*" multiple onChange="{{ addPhotos }}" style="display: none;">
+        </label>
+      </sc-if>
+    </div>
+  </section>
+
+  <!-- INFOS + FOOTER -->
+  <footer style="background: #111; color: #f5f0e6; padding: 48px 20px 24px;">
+    <div style="max-width: 1100px; margin: 0 auto; display: flex; flex-direction: column; gap: 32px;">
+      <div style="display: flex; gap: 24px; flex-wrap: wrap; justify-content: space-between; align-items: center;">
+        <div style="font-family: 'Archivo Black', sans-serif; font-size: clamp(28px, 5vw, 48px); text-transform: uppercase;">On se voit sur la ligne d'arrivée ?</div>
+        <a href="{{ billetterieUrl }}" target="_blank" style="text-decoration: none; font-family: 'Archivo Black', sans-serif; font-size: 20px; text-transform: uppercase; padding: 14px 28px; background: #ffd23f; color: #111; border: 4px solid #f5f0e6; box-shadow: 6px 6px 0 #ff5fa8; display: inline-block;" style-hover="background: #ff5fa8; color: #111;">Billetterie ↗</a>
+      </div>
+      <div style="display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; border-top: 2px solid #444; padding-top: 20px; font-size: 14px; color: #999;">
+        <span>Teuf Champêtre · {{ edition }} · {{ lieu }}</span>
+        <div style="display: flex; gap: 12px; align-items: center;">
+          <sc-if value="{{ adminOn }}" hint-placeholder-val="{{ false }}">
+            <button onClick="{{ resetData }}" style="border: 2px solid #666; background: transparent; color: #999; cursor: pointer; padding: 6px 12px; font-family: inherit; font-size: 13px;">Réinitialiser les données</button>
+          </sc-if>
+          <button onClick="{{ toggleAdmin }}" style="border: 2px solid {{ adminBorderColor }}; background: {{ adminBg }}; color: {{ adminColor }}; cursor: pointer; padding: 6px 12px; font-family: inherit; font-size: 13px; font-weight: 700;">{{ adminLabel }}</button>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ADMIN BANNER -->
+  <sc-if value="{{ adminOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position: fixed; bottom: 16px; left: 16px; z-index: 100; background: #e4572e; color: #fff; border: 4px solid #111; box-shadow: 6px 6px 0 #111; padding: 12px 18px; font-weight: 700; display: flex; gap: 12px; align-items: center;">
+      🔧 Mode admin actif — ajoute / supprime photos et artistes
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;billetterieUrl&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;#billetterie-bientot&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Billetterie&quot;}, &quot;edition&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;Édition 2026&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Infos&quot;}, &quot;dates&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;22–23 août&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Infos&quot;}, &quot;lieu&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;Le grand champ, quelque part en campagne&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Infos&quot;}}">
+class Component extends DCLogic {
+  KEY = 'teuf-champetre-data-v1';
+  defaults() {
+    const colors = ['#ffd23f', '#ff5fa8', '#a6e05a', '#9ecbff'];
+    return {
+      artists: [
+        { name: 'Bétonnière Sonore', genre: 'Électro', slot: 'Samedi · 23h30' },
+        { name: 'Les Fourches', genre: 'Rock', slot: 'Samedi · 21h00' },
+        { name: 'DJ Paille', genre: 'Techno', slot: 'Dimanche · 01h00' },
+        { name: 'Mirabelle Club', genre: 'Pop', slot: 'Samedi · 19h00' },
+        { name: 'Tracteur Rave', genre: 'Électro', slot: 'Dimanche · 23h00' },
+        { name: 'Foin Fatal', genre: 'Rock', slot: 'Dimanche · 20h30' },
+      ],
+      photos: [
+        { isPlaceholder: true, label: 'foule devant la scène' },
+        { isPlaceholder: true, label: 'coucher de soleil sur le champ' },
+        { isPlaceholder: true, label: 'DJ set de nuit' },
+        { isPlaceholder: true, label: 'copains au camping' },
+        { isPlaceholder: true, label: 'pogo édition dernière' },
+        { isPlaceholder: true, label: 'guirlandes + bottes de foin' },
+      ],
+      _colors: colors,
+    };
+  }
+  state = { adminOn: false, data: null };
+  componentDidMount() {
+    let data = null;
+    try { data = JSON.parse(localStorage.getItem(this.KEY)); } catch (e) {}
+    this.setState({ data: data || this.defaults() });
+  }
+  save(data) {
+    this.setState({ data });
+    try { localStorage.setItem(this.KEY, JSON.stringify(data)); } catch (e) {}
+  }
+  renderVals() {
+    const d = this.state.data || this.defaults();
+    const colors = ['#ffd23f', '#ff5fa8', '#a6e05a', '#9ecbff'];
+    const adminOn = this.state.adminOn;
+    const LINK_DEFS = [['spotify', 'Spotify'], ['soundcloud', 'SoundCloud'], ['instagram', 'Insta']];
+    const artists = (d.artists || []).map((a, i) => {
+      const links = LINK_DEFS.filter(([k]) => a[k]).map(([k, label]) => ({ label, url: a[k] }));
+      return {
+      ...a,
+      links,
+      hasLinks: links.length > 0,
+      editLinks: () => {
+        const updated = { ...a };
+        for (const [k, label] of LINK_DEFS) {
+          const v = prompt('Lien ' + label + ' pour ' + a.name + ' (vide = aucun) :', a[k] || '');
+          if (v === null) return;
+          updated[k] = v.trim();
+        }
+        const artists = d.artists.map((x, j) => (j === i ? updated : x));
+        this.save({ ...d, artists });
+      },
+      tagColor: colors[i % colors.length],
+      remove: () => {
+        const artists = d.artists.filter((_, j) => j !== i);
+        this.save({ ...d, artists });
+      },
+    };});
+    const photos = (d.photos || []).map((p, i) => ({
+      ...p,
+      hasSrc: !!p.src,
+      bgImage: p.src ? "url('" + p.src + "')" : 'none',
+      remove: () => {
+        const photos = d.photos.filter((_, j) => j !== i);
+        this.save({ ...d, photos });
+      },
+    }));
+    return {
+      edition: this.props.edition ?? 'Édition 2026',
+      dates: this.props.dates ?? '22–23 août',
+      lieu: this.props.lieu ?? 'Le grand champ, quelque part en campagne',
+      billetterieUrl: this.props.billetterieUrl ?? '#billetterie-bientot',
+      adminOn,
+      artists,
+      photos,
+      toggleAdmin: () => this.setState({ adminOn: !adminOn }),
+      adminLabel: adminOn ? 'Quitter le mode admin' : 'Admin',
+      adminBg: adminOn ? '#e4572e' : 'transparent',
+      adminColor: adminOn ? '#fff' : '#999',
+      adminBorderColor: adminOn ? '#e4572e' : '#666',
+      resetData: () => {
+        if (confirm('Remettre les données par défaut ?')) this.save(this.defaults());
+      },
+      addArtist: (e) => {
+        e.preventDefault();
+        const f = e.target;
+        const name = f.name.value.trim();
+        if (!name) return;
+        const artists = [...d.artists, { name, genre: f.genre.value.trim() || 'Mystère', slot: f.slot.value.trim() || 'Horaire à venir', spotify: f.spotify.value.trim(), soundcloud: f.soundcloud.value.trim(), instagram: f.instagram.value.trim() }];
+        this.save({ ...d, artists });
+        f.reset();
+      },
+      addPhotos: (e) => {
+        const files = Array.from(e.target.files || []);
+        if (!files.length) return;
+        let pending = files.length;
+        const added = [];
+        files.forEach((file) => {
+          const reader = new FileReader();
+          reader.onload = () => {
+            added.push({ src: reader.result, label: file.name });
+            if (--pending === 0) this.save({ ...d, photos: [...d.photos, ...added] });
+          };
+          reader.readAsDataURL(file);
+        });
+        e.target.value = '';
+      },
+    };
+  }
+}
+</script>
+</body>
+</html>
