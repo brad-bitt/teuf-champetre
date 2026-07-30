@@ -80,6 +80,10 @@ create policy "écriture admin" on public.artists for all
 create policy "écriture admin" on public.photos for all
   using (public.is_admin()) with check (public.is_admin());
 
--- La liste des admins n'est lisible que par un admin (aucune écriture côté client :
--- on ajoute les emails via le SQL Editor ou le dashboard).
+-- La liste des admins n'est lisible/modifiable que par un admin (depuis le
+-- back-office du site). Suppression bloquée s'il ne reste qu'un seul admin,
+-- pour ne jamais se retrouver sans accès.
 create policy "lecture admin" on public.admins for select using (public.is_admin());
+create policy "ajout admin" on public.admins for insert with check (public.is_admin());
+create policy "suppression admin" on public.admins for delete
+  using (public.is_admin() and (select count(*) from public.admins) > 1);
