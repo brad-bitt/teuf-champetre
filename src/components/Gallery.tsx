@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
+import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from "react";
 import { PLACEHOLDER_PHOTOS } from "@/lib/demo-data";
 import type { Photo } from "@/lib/types";
 import styles from "./Gallery.module.css";
@@ -17,8 +17,8 @@ type Props = {
   onRename: (photo: Photo, label: string) => void;
 };
 
-/** Photos visibles avant le bouton « voir plus » — limite le scroll. */
-const PREVIEW_COUNT = 6;
+/** Nombre de rangées pleines affichées avant le bouton « voir plus ». */
+const PREVIEW_ROWS = 2;
 
 /** Un label « IMG_0969.jpeg » n'apporte rien : on ne l'affiche pas en légende. */
 const looksLikeFileName = (label: string) => /\.(jpe?g|png|webp|heic|gif|avif)$/i.test(label);
@@ -37,16 +37,33 @@ export default function Gallery({
   const shown = real ? photos : PLACEHOLDER_PHOTOS;
 
   const [showAll, setShowAll] = useState(false);
-  // Les photos au-delà de 6 ne sont montées qu'au premier dépliage :
+  // Les photos repliées ne sont montées qu'au premier dépliage :
   // pas de téléchargement de vignettes pour qui ne déplie jamais.
   const [everOpened, setEverOpened] = useState(false);
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const [dragIndex, setDragIndex] = useState<number | null>(null);
   const [overIndex, setOverIndex] = useState<number | null>(null);
 
+  // L'aperçu = PREVIEW_ROWS rangées PLEINES : on mesure le nombre réel de
+  // colonnes de la grille (elle s'adapte à la largeur d'écran) pour ne jamais
+  // laisser de trou, et pour que la grille dépliée s'aligne pile en dessous.
+  const gridRef = useRef<HTMLDivElement | null>(null);
+  const [cols, setCols] = useState(3);
+  useEffect(() => {
+    const grid = gridRef.current;
+    if (!grid) return;
+    const update = () =>
+      setCols(getComputedStyle(grid).gridTemplateColumns.split(" ").length);
+    update();
+    const observer = new ResizeObserver(update);
+    observer.observe(grid);
+    return () => observer.disconnect();
+  }, []);
+  const previewCount = Math.max(cols * PREVIEW_ROWS, 4);
+
   // En mode admin on montre tout : on ne réordonne pas ce qu'on ne voit pas.
-  const primary = adminOn ? shown : shown.slice(0, PREVIEW_COUNT);
-  const extra = adminOn ? [] : shown.slice(PREVIEW_COUNT);
+  const primary = adminOn ? shown : shown.slice(0, previewCount);
+  const extra = adminOn ? [] : shown.slice(previewCount);
 
   const openPhoto = openIndex === null ? null : shown[openIndex];
   const step = (delta: number) =>
@@ -184,7 +201,7 @@ export default function Gallery({
         <span className={styles.subBadge}>Souvenirs des étapes passées 📸</span>
 
         <div>
-          <div className={styles.grid} data-reveal="">
+          <div ref={gridRef} className={styles.grid} data-reveal="">
             {primary.map((photo, i) => renderFigure(photo, i))}
           </div>
 
@@ -196,7 +213,7 @@ export default function Gallery({
             >
               <div className={styles.extraInner}>
                 <div className={`${styles.grid} ${styles.gridExtra}`}>
-                  {extra.map((photo, i) => renderFigure(photo, i + PREVIEW_COUNT))}
+                  {extra.map((photo, i) => renderFigure(photo, i + previewCount))}
                 </div>
               </div>
             </div>
