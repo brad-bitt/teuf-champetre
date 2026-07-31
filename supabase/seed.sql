@@ -12,7 +12,7 @@ insert into public.artists (name, genre, slot, position) values
   ('Bétonnière Sonore', 'Électro', 'Samedi · 23h30', 0),
   ('Les Fourches',      'Rock',    'Samedi · 21h00', 1),
   ('DJ Paille',         'Techno',  'Dimanche · 01h00', 2),
-  ('Mirabelle Club',    'Pop',     'Samedi · 19h00', 3),
+  ('Mirabelle Club',    'Pop',     'Vendredi · 19h00', 3),
   ('Tracteur Rave',     'Électro', 'Dimanche · 23h00', 4),
   ('Foin Fatal',        'Rock',    'Dimanche · 20h30', 5);
 
@@ -21,7 +21,7 @@ insert into public.activities (name, slot, place, position) values
   ('Bingo champêtre',     'Samedi · 15h00',   'Sous le chapiteau',  0),
   ('Loto des champs',     'Samedi · 17h00',   'La grange',          1),
   ('Tournoi de pétanque', 'Dimanche · 11h00', 'Terrain du haut',    2),
-  ('Chasse au trésor',    'Dimanche · 14h00', 'Tout le champ',      3);
+  ('Chasse au trésor',    'Vendredi · 18h30', 'Tout le champ',      3);
 
 -- ⚠️ IMPORTANT : déclare ton/tes email(s) admin ici.
 -- C'est l'email du compte Google (ou du compte email/mot de passe créé

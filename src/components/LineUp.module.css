@@ -184,3 +184,42 @@
   cursor: pointer;
   box-shadow: 4px 4px 0 #999;
 }
+
+/* ——— En-têtes de jour (Vendredi / Samedi / Dimanche) ——— */
+
+.dayBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.dayHeader {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* Chip noir façon dossard, jour dans sa couleur d'accent (via style inline) */
+.dayChip {
+  font-family: var(--font-heading);
+  font-size: clamp(18px, 3vw, 26px);
+  text-transform: uppercase;
+  background: var(--ink);
+  padding: 6px 18px;
+  transform: rotate(-1deg);
+  box-shadow: 4px 4px 0 rgba(17, 17, 17, 0.25);
+}
+
+/* Le tracé de l'étape qui file vers la droite */
+.dayLine {
+  flex: 1;
+  border-top: 4px dashed var(--ink);
+  opacity: 0.4;
+}
+
+.dayEmpty {
+  margin: 0;
+  font-weight: 500;
+  font-style: italic;
+  color: rgba(17, 17, 17, 0.6);
+}

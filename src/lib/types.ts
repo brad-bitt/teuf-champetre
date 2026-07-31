@@ -57,6 +57,52 @@ export const LINK_DEFS: Array<{ key: keyof ArtistLinks; label: string }> = [
 /** Couleurs des badges de genre, dans l'ordre de la maquette. */
 export const TAG_COLORS = ["#ffd23f", "#ff5fa8", "#a6e05a", "#9ecbff"];
 
+/** Les trois jours du festival, dans l'ordre d'affichage. */
+export const FESTIVAL_DAYS = ["Vendredi", "Samedi", "Dimanche"] as const;
+export type FestivalDay = (typeof FESTIVAL_DAYS)[number];
+
+/** Couleur d'accent de chaque jour — identique dans toutes les sections. */
+export const DAY_COLORS: Record<FestivalDay, string> = {
+  Vendredi: "var(--pink)",
+  Samedi: "var(--yellow)",
+  Dimanche: "var(--green)",
+};
+
+const normalize = (s: string) =>
+  s
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .trim();
+
+/**
+ * Extrait le jour d'un créneau « Samedi · 23h30 » (insensible à la casse et
+ * aux accents). Le jour reste stocké DANS le champ slot : pas de migration,
+ * les données existantes se rangent toutes seules.
+ */
+export function parseSlotDay(slot: string): FestivalDay | null {
+  const n = normalize(slot);
+  return FESTIVAL_DAYS.find((d) => n.startsWith(normalize(d))) ?? null;
+}
+
+/**
+ * Minutes depuis minuit pour trier chronologiquement dans un jour
+ * (« 23h30 » → 1410). Sans horaire reconnu : classé en fin de journée.
+ */
+export function slotMinutes(slot: string): number {
+  const m = slotWithoutDay(slot).match(/(\d{1,2})\s*[h:]\s*(\d{2})?/);
+  if (!m) return Number.POSITIVE_INFINITY;
+  return parseInt(m[1], 10) * 60 + (m[2] ? parseInt(m[2], 10) : 0);
+}
+
+/** L'horaire sans le jour : « Samedi · 23h30 » → « 23h30 » (l'en-tête de groupe affiche déjà le jour). */
+export function slotWithoutDay(slot: string): string {
+  const day = parseSlotDay(slot);
+  if (!day) return slot;
+  const rest = slot.replace(new RegExp(`^\\s*${day}\\s*[·•\\-–—:]?\\s*`, "i"), "").trim();
+  return rest || "Horaire à venir";
+}
+
 /**
  * Les 4 maillots du Tour, en rotation sur les badges de genre des artistes :
  * jaune (leader), vert (sprinteur), à pois (grimpeur), blanc (jeune espoir).

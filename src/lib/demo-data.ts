@@ -16,7 +16,7 @@ export const DEMO_DATA: FestivalData = {
     { id: "demo-1", name: "Bétonnière Sonore", genre: "Électro", slot: "Samedi · 23h30", spotify: null, soundcloud: null, instagram: null, position: 0 },
     { id: "demo-2", name: "Les Fourches", genre: "Rock", slot: "Samedi · 21h00", spotify: null, soundcloud: null, instagram: null, position: 1 },
     { id: "demo-3", name: "DJ Paille", genre: "Techno", slot: "Dimanche · 01h00", spotify: null, soundcloud: null, instagram: null, position: 2 },
-    { id: "demo-4", name: "Mirabelle Club", genre: "Pop", slot: "Samedi · 19h00", spotify: null, soundcloud: null, instagram: null, position: 3 },
+    { id: "demo-4", name: "Mirabelle Club", genre: "Pop", slot: "Vendredi · 19h00", spotify: null, soundcloud: null, instagram: null, position: 3 },
     { id: "demo-5", name: "Tracteur Rave", genre: "Électro", slot: "Dimanche · 23h00", spotify: null, soundcloud: null, instagram: null, position: 4 },
     { id: "demo-6", name: "Foin Fatal", genre: "Rock", slot: "Dimanche · 20h30", spotify: null, soundcloud: null, instagram: null, position: 5 },
   ],
@@ -24,7 +24,7 @@ export const DEMO_DATA: FestivalData = {
     { id: "demo-a1", name: "Bingo champêtre",     slot: "Samedi · 15h00",   place: "Sous le chapiteau", position: 0 },
     { id: "demo-a2", name: "Loto des champs",     slot: "Samedi · 17h00",   place: "La grange",         position: 1 },
     { id: "demo-a3", name: "Tournoi de pétanque", slot: "Dimanche · 11h00", place: "Terrain du haut",   position: 2 },
-    { id: "demo-a4", name: "Chasse au trésor",    slot: "Dimanche · 14h00", place: "Tout le champ",     position: 3 },
+    { id: "demo-a4", name: "Chasse au trésor",    slot: "Vendredi · 18h30", place: "Tout le champ",     position: 3 },
   ],
   photos: PLACEHOLDER_LABELS(),
 };
