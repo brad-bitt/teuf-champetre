@@ -289,3 +289,25 @@
   padding: 8px 14px;
   cursor: pointer;
 }
+
+/* ——— Dépliage animé des photos au-delà de 6 ——— */
+
+.extraWrap {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.5s ease;
+}
+
+.extraOpen {
+  grid-template-rows: 1fr;
+}
+
+.extraInner {
+  overflow: hidden;
+}
+
+/* Recrée l'écart de la grille principale une fois déplié
+   (clippé par l'overflow tant que c'est replié) */
+.gridExtra {
+  margin-top: 20px;
+}

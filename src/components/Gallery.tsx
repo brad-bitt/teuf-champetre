@@ -37,18 +37,27 @@ export default function Gallery({
   const shown = real ? photos : PLACEHOLDER_PHOTOS;
 
   const [showAll, setShowAll] = useState(false);
+  // Les photos au-delà de 6 ne sont montées qu'au premier dépliage :
+  // pas de téléchargement de vignettes pour qui ne déplie jamais.
+  const [everOpened, setEverOpened] = useState(false);
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const [dragIndex, setDragIndex] = useState<number | null>(null);
   const [overIndex, setOverIndex] = useState<number | null>(null);
 
   // En mode admin on montre tout : on ne réordonne pas ce qu'on ne voit pas.
-  const expanded = adminOn || showAll;
-  const visible = expanded ? shown : shown.slice(0, PREVIEW_COUNT);
-  const hiddenCount = shown.length - visible.length;
+  const primary = adminOn ? shown : shown.slice(0, PREVIEW_COUNT);
+  const extra = adminOn ? [] : shown.slice(PREVIEW_COUNT);
 
   const openPhoto = openIndex === null ? null : shown[openIndex];
   const step = (delta: number) =>
     setOpenIndex((i) => (i === null ? i : (i + delta + shown.length) % shown.length));
+
+  const expand = () => {
+    setEverOpened(true);
+    // Double rAF : laisse le navigateur peindre l'état replié (0fr) avant de
+    // passer à 1fr, sinon la transition ne se déclenche pas au premier dépliage.
+    requestAnimationFrame(() => requestAnimationFrame(() => setShowAll(true)));
+  };
 
   // Lightbox ouverte : clavier (Échap, ←/→) et scroll de la page verrouillé
   const lightboxOpen = openIndex !== null;
@@ -81,116 +90,130 @@ export default function Gallery({
     setOverIndex(null);
   };
 
+  /** Une carte photo — `i` est l'index GLOBAL dans `shown` (lightbox, drag & drop). */
+  const renderFigure = (photo: Photo, i: number) => {
+    const draggable = adminOn && real;
+    const classes = [
+      styles.figure,
+      draggable ? styles.grabbable : "",
+      dragIndex === i ? styles.dragging : "",
+      overIndex === i && dragIndex !== null && dragIndex !== i ? styles.dragOver : "",
+    ]
+      .filter(Boolean)
+      .join(" ");
+    return (
+      <figure
+        key={photo.id}
+        className={classes}
+        draggable={draggable}
+        onDragStart={draggable ? () => setDragIndex(i) : undefined}
+        onDragOver={
+          draggable
+            ? (e) => {
+                e.preventDefault();
+                setOverIndex(i);
+              }
+            : undefined
+        }
+        onDrop={
+          draggable
+            ? (e) => {
+                e.preventDefault();
+                if (dragIndex !== null && dragIndex !== i) onMove(dragIndex, i);
+                endDrag();
+              }
+            : undefined
+        }
+        onDragEnd={endDrag}
+      >
+        {photo.url ? (
+          <div
+            role="button"
+            tabIndex={0}
+            aria-label={`Agrandir : ${photo.label || "photo"}`}
+            className={`${styles.img} ${styles.clickable}`}
+            style={{ backgroundImage: `url('${photo.url}')` }}
+            onClick={() => setOpenIndex(i)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                setOpenIndex(i);
+              }
+            }}
+          />
+        ) : (
+          <div className={styles.placeholder}>
+            <span className={styles.placeholderLabel}>{photo.label}</span>
+          </div>
+        )}
+        {adminOn && photo.url && (
+          <button type="button" className={styles.removeBtn} onClick={() => onRemove(photo)}>
+            ✕ Supprimer
+          </button>
+        )}
+        {draggable && (
+          <div className={styles.moveBtns}>
+            <button
+              type="button"
+              className={styles.moveBtn}
+              disabled={i === 0}
+              onClick={() => onMove(i, i - 1)}
+              aria-label="Avancer la photo"
+            >
+              ‹
+            </button>
+            <button
+              type="button"
+              className={styles.moveBtn}
+              disabled={i === shown.length - 1}
+              onClick={() => onMove(i, i + 1)}
+              aria-label="Reculer la photo"
+            >
+              ›
+            </button>
+          </div>
+        )}
+      </figure>
+    );
+  };
+
   return (
     <section id="galerie" className={styles.section}>
       <div className={styles.inner}>
         <h2 className={styles.title}>La Teuf en photos</h2>
         <span className={styles.subBadge}>Souvenirs des étapes passées 📸</span>
 
-        <div className={styles.grid} data-reveal="">
-          {visible.map((photo, i) => {
-            const draggable = adminOn && real;
-            const classes = [
-              styles.figure,
-              draggable ? styles.grabbable : "",
-              dragIndex === i ? styles.dragging : "",
-              overIndex === i && dragIndex !== null && dragIndex !== i ? styles.dragOver : "",
-            ]
-              .filter(Boolean)
-              .join(" ");
-            return (
-              <figure
-                key={photo.id}
-                className={classes}
-                draggable={draggable}
-                onDragStart={draggable ? () => setDragIndex(i) : undefined}
-                onDragOver={
-                  draggable
-                    ? (e) => {
-                        e.preventDefault();
-                        setOverIndex(i);
-                      }
-                    : undefined
-                }
-                onDrop={
-                  draggable
-                    ? (e) => {
-                        e.preventDefault();
-                        if (dragIndex !== null && dragIndex !== i) onMove(dragIndex, i);
-                        endDrag();
-                      }
-                    : undefined
-                }
-                onDragEnd={endDrag}
-              >
-                {photo.url ? (
-                  <div
-                    role="button"
-                    tabIndex={0}
-                    aria-label={`Agrandir : ${photo.label || "photo"}`}
-                    className={`${styles.img} ${styles.clickable}`}
-                    style={{ backgroundImage: `url('${photo.url}')` }}
-                    onClick={() => setOpenIndex(i)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" || e.key === " ") {
-                        e.preventDefault();
-                        setOpenIndex(i);
-                      }
-                    }}
-                  />
-                ) : (
-                  <div className={styles.placeholder}>
-                    <span className={styles.placeholderLabel}>{photo.label}</span>
-                  </div>
-                )}
-                {adminOn && photo.url && (
-                  <button
-                    type="button"
-                    className={styles.removeBtn}
-                    onClick={() => onRemove(photo)}
-                  >
-                    ✕ Supprimer
-                  </button>
-                )}
-                {draggable && (
-                  <div className={styles.moveBtns}>
-                    <button
-                      type="button"
-                      className={styles.moveBtn}
-                      disabled={i === 0}
-                      onClick={() => onMove(i, i - 1)}
-                      aria-label="Avancer la photo"
-                    >
-                      ‹
-                    </button>
-                    <button
-                      type="button"
-                      className={styles.moveBtn}
-                      disabled={i === visible.length - 1}
-                      onClick={() => onMove(i, i + 1)}
-                      aria-label="Reculer la photo"
-                    >
-                      ›
-                    </button>
-                  </div>
-                )}
-              </figure>
-            );
-          })}
+        <div>
+          <div className={styles.grid} data-reveal="">
+            {primary.map((photo, i) => renderFigure(photo, i))}
+          </div>
+
+          {/* Photos au-delà de 6 : hauteur animée 0fr ⇄ 1fr au (dé)pliage */}
+          {extra.length > 0 && everOpened && (
+            <div
+              className={`${styles.extraWrap} ${showAll ? styles.extraOpen : ""}`}
+              inert={!showAll}
+            >
+              <div className={styles.extraInner}>
+                <div className={`${styles.grid} ${styles.gridExtra}`}>
+                  {extra.map((photo, i) => renderFigure(photo, i + PREVIEW_COUNT))}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
-        {!expanded && hiddenCount > 0 && (
+        {!adminOn && extra.length > 0 && (
           <div className={styles.moreRow}>
-            <button type="button" className={styles.moreBtn} onClick={() => setShowAll(true)}>
-              📸 Voir les {hiddenCount} autres photos
-            </button>
-          </div>
-        )}
-        {showAll && !adminOn && shown.length > PREVIEW_COUNT && (
-          <div className={styles.moreRow}>
-            <button type="button" className={styles.moreBtn} onClick={() => setShowAll(false)}>
-              Replier la galerie ↑
-            </button>
+            {showAll ? (
+              <button type="button" className={styles.moreBtn} onClick={() => setShowAll(false)}>
+                Replier la galerie ↑
+              </button>
+            ) : (
+              <button type="button" className={styles.moreBtn} onClick={expand}>
+                📸 Voir les {extra.length} autres photos
+              </button>
+            )}
           </div>
         )}
 
