@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type ChangeEvent } from "react";
+import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
 import { PLACEHOLDER_PHOTOS } from "@/lib/demo-data";
 import type { Photo } from "@/lib/types";
 import styles from "./Gallery.module.css";
@@ -13,6 +13,8 @@ type Props = {
   onAdd: (files: File[]) => void;
   /** Déplace la photo d'un index vers un autre (drag & drop ou flèches). */
   onMove: (from: number, to: number) => void;
+  /** Renomme une photo (depuis la lightbox, en mode admin). */
+  onRename: (photo: Photo, label: string) => void;
 };
 
 /** Photos visibles avant le bouton « voir plus » — limite le scroll. */
@@ -21,7 +23,15 @@ const PREVIEW_COUNT = 6;
 /** Un label « IMG_0969.jpeg » n'apporte rien : on ne l'affiche pas en légende. */
 const looksLikeFileName = (label: string) => /\.(jpe?g|png|webp|heic|gif|avif)$/i.test(label);
 
-export default function Gallery({ photos, adminOn, uploading, onRemove, onAdd, onMove }: Props) {
+export default function Gallery({
+  photos,
+  adminOn,
+  uploading,
+  onRemove,
+  onAdd,
+  onMove,
+  onRename,
+}: Props) {
   // Galerie vide ⇒ placeholders rayés façon maquette (non supprimables)
   const real = photos.length > 0;
   const shown = real ? photos : PLACEHOLDER_PHOTOS;
@@ -45,6 +55,8 @@ export default function Gallery({ photos, adminOn, uploading, onRemove, onAdd, o
   useEffect(() => {
     if (!lightboxOpen) return;
     const onKey = (e: KeyboardEvent) => {
+      // En train de taper dans le champ de renommage : on laisse le clavier tranquille
+      if ((e.target as HTMLElement | null)?.tagName === "INPUT") return;
       if (e.key === "Escape") setOpenIndex(null);
       if (e.key === "ArrowLeft") step(-1);
       if (e.key === "ArrowRight") step(1);
@@ -251,8 +263,31 @@ export default function Gallery({ photos, adminOn, uploading, onRemove, onAdd, o
             </button>
           )}
           <div className={styles.lightboxCaption} onClick={(e) => e.stopPropagation()}>
-            {openPhoto.label && !looksLikeFileName(openPhoto.label) && (
-              <span className={styles.lightboxLabel}>{openPhoto.label}</span>
+            {adminOn && real ? (
+              <form
+                key={openPhoto.id}
+                className={styles.renameForm}
+                onSubmit={(e: FormEvent<HTMLFormElement>) => {
+                  e.preventDefault();
+                  const label = String(new FormData(e.currentTarget).get("label") ?? "").trim();
+                  onRename(openPhoto, label);
+                }}
+              >
+                <input
+                  name="label"
+                  defaultValue={openPhoto.label}
+                  placeholder="Nom de la photo"
+                  className={styles.renameInput}
+                />
+                <button type="submit" className={styles.renameBtn}>
+                  Renommer
+                </button>
+              </form>
+            ) : (
+              openPhoto.label &&
+              !looksLikeFileName(openPhoto.label) && (
+                <span className={styles.lightboxLabel}>{openPhoto.label}</span>
+              )
             )}
             <span className={styles.lightboxCount}>
               {(openIndex ?? 0) + 1} / {shown.length}

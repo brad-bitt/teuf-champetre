@@ -293,6 +293,16 @@ export default function FestivalSite({ initialData, demoMode }: Props) {
     [supabase, getAccessToken, refresh],
   );
 
+  const renamePhoto = useCallback(
+    async (photo: Photo, label: string) => {
+      if (!supabase) return;
+      const { error } = await supabase.from("photos").update({ label }).eq("id", photo.id);
+      if (error) alert("Renommage impossible : " + error.message);
+      await refresh();
+    },
+    [supabase, refresh],
+  );
+
   /** Reclasse une photo (drag & drop ou flèches) : affichage immédiat, persistance ensuite. */
   const movePhoto = useCallback(
     async (from: number, to: number) => {
@@ -367,6 +377,7 @@ export default function FestivalSite({ initialData, demoMode }: Props) {
         onRemove={removePhoto}
         onAdd={addPhotos}
         onMove={movePhoto}
+        onRename={renamePhoto}
       />
       <Footer settings={data.settings} adminOn={adminOn} onAdminClick={handleAdminClick} />
 

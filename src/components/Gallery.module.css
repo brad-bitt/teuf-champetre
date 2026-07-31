@@ -265,3 +265,27 @@
     max-height: 64vh;
   }
 }
+
+/* ——— Renommage (admin, dans la lightbox) ——— */
+
+.renameForm {
+  display: flex;
+  gap: 8px;
+}
+
+.renameInput {
+  border: 3px solid var(--ink);
+  background: #fff;
+  padding: 8px 10px;
+  font-size: 14px;
+  width: min(280px, 60vw);
+}
+
+.renameBtn {
+  border: 3px solid var(--ink);
+  background: var(--yellow);
+  font-weight: 700;
+  font-size: 14px;
+  padding: 8px 14px;
+  cursor: pointer;
+}
