@@ -44,6 +44,7 @@ create table public.photos (
   id         uuid primary key default gen_random_uuid(),
   public_id  text not null,
   label      text not null default '',
+  position   int  not null default 0,
   created_at timestamptz not null default now()
 );
 

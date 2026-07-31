@@ -226,6 +226,7 @@ export default function FestivalSite({ initialData, demoMode }: Props) {
         const sig = await sigRes.json();
 
         // 2. Upload direct navigateur → Cloudinary (le fichier ne passe pas par notre serveur)
+        let nextPosition = data.photos.length;
         for (const file of files) {
           if (!file.type.startsWith("image/")) {
             alert(`« ${file.name} » n'est pas une image.`);
@@ -255,18 +256,19 @@ export default function FestivalSite({ initialData, demoMode }: Props) {
           }
           const uploaded = await upRes.json();
 
-          // 3. Référence en base (protégée par RLS)
+          // 3. Référence en base (protégée par RLS), à la suite des photos existantes
           const { error } = await supabase
             .from("photos")
-            .insert({ public_id: uploaded.public_id, label: file.name });
+            .insert({ public_id: uploaded.public_id, label: file.name, position: nextPosition });
           if (error) alert(`Enregistrement de « ${file.name} » impossible : ${error.message}`);
+          else nextPosition += 1;
         }
       } finally {
         setUploading(false);
       }
       await refresh();
     },
-    [supabase, getAccessToken, refresh],
+    [supabase, getAccessToken, refresh, data.photos.length],
   );
 
   const removePhoto = useCallback(
@@ -289,6 +291,35 @@ export default function FestivalSite({ initialData, demoMode }: Props) {
       await refresh();
     },
     [supabase, getAccessToken, refresh],
+  );
+
+  /** Reclasse une photo (drag & drop ou flèches) : affichage immédiat, persistance ensuite. */
+  const movePhoto = useCallback(
+    async (from: number, to: number) => {
+      if (!supabase || from === to) return;
+      const photos = [...data.photos];
+      if (from < 0 || to < 0 || from >= photos.length || to >= photos.length) return;
+      const [moved] = photos.splice(from, 1);
+      photos.splice(to, 0, moved);
+      setData({ ...data, photos });
+
+      const results = await Promise.all(
+        photos.map((p, i) =>
+          p.position !== i
+            ? supabase.from("photos").update({ position: i }).eq("id", p.id)
+            : null,
+        ),
+      );
+      const failed = results.find((r) => r?.error);
+      if (failed?.error) {
+        alert(
+          `Réorganisation impossible : ${failed.error.message}` +
+            " (la migration 0004_photo_positions a-t-elle été exécutée dans Supabase ?)",
+        );
+      }
+      await refresh();
+    },
+    [supabase, data, refresh],
   );
 
   const saveSettings = useCallback(
@@ -335,6 +366,7 @@ export default function FestivalSite({ initialData, demoMode }: Props) {
         uploading={uploading}
         onRemove={removePhoto}
         onAdd={addPhotos}
+        onMove={movePhoto}
       />
       <Footer settings={data.settings} adminOn={adminOn} onAdminClick={handleAdminClick} />
 

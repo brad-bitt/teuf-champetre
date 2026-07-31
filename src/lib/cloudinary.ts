@@ -13,3 +13,9 @@ export function photoUrl(publicId: string): string | null {
   if (!cloudinaryCloudName || !publicId) return null;
   return `https://res.cloudinary.com/${cloudinaryCloudName}/image/upload/f_auto,q_auto,w_800/${publicId}`;
 }
+
+/** URL grand format pour la lightbox (1600px, toujours optimisée). */
+export function photoLargeUrl(publicId: string): string | null {
+  if (!cloudinaryCloudName || !publicId) return null;
+  return `https://res.cloudinary.com/${cloudinaryCloudName}/image/upload/f_auto,q_auto,w_1600/${publicId}`;
+}

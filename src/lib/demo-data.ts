@@ -37,7 +37,14 @@ function PLACEHOLDER_LABELS() {
     "copains au camping",
     "pogo édition dernière",
     "guirlandes + bottes de foin",
-  ].map((label, i) => ({ id: `placeholder-${i}`, publicId: "", label, url: null }));
+  ].map((label, i) => ({
+    id: `placeholder-${i}`,
+    publicId: "",
+    label,
+    url: null,
+    largeUrl: null,
+    position: i,
+  }));
 }
 
 /** Placeholders affichés quand la galerie réelle est encore vide. */

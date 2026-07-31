@@ -26,6 +26,10 @@ export type Photo = {
   label: string;
   /** URL d'affichage optimisée — null ⇒ placeholder rayé façon maquette. */
   url: string | null;
+  /** URL grand format pour la lightbox. */
+  largeUrl: string | null;
+  /** Ordre d'affichage, modifiable par drag & drop dans le back-office. */
+  position: number;
 };
 
 export type Settings = {

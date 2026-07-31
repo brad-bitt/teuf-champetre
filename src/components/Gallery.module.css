@@ -112,3 +112,156 @@
 .fileInput {
   display: none;
 }
+
+/* ——— Interactions photos ——— */
+
+.clickable {
+  cursor: zoom-in;
+}
+
+.grabbable {
+  cursor: grab;
+}
+
+.dragging {
+  opacity: 0.45;
+}
+
+.dragOver {
+  outline: 4px dashed var(--ink);
+  outline-offset: 4px;
+}
+
+/* Flèches de reclassement (secours tactile du drag & drop) */
+.moveBtns {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  display: flex;
+  gap: 6px;
+}
+
+.moveBtn {
+  border: 3px solid var(--ink);
+  background: #fff;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 4px 10px;
+}
+.moveBtn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+/* ——— Bouton « voir plus » ——— */
+
+.moreRow {
+  display: flex;
+  justify-content: center;
+}
+
+.moreBtn {
+  border: 4px solid var(--ink);
+  background: var(--yellow);
+  box-shadow: 6px 6px 0 var(--ink);
+  font-weight: 700;
+  font-size: 16px;
+  padding: 12px 24px;
+  cursor: pointer;
+  transition: transform 0.1s ease-out, box-shadow 0.1s ease-out;
+}
+.moreBtn:hover {
+  transform: translate(2px, 2px);
+  box-shadow: 3px 3px 0 var(--ink);
+}
+
+/* ——— Lightbox ——— */
+
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(17, 17, 17, 0.93);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 24px;
+}
+
+.lightboxImg {
+  max-width: min(1100px, 92vw);
+  max-height: 72vh;
+  border: 4px solid var(--bg);
+  box-shadow: 10px 10px 0 rgba(0, 0, 0, 0.55);
+  background: #fff;
+  cursor: default;
+}
+
+.lightboxClose {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  border: 3px solid var(--bg);
+  background: var(--orange);
+  color: #fff;
+  font-weight: 700;
+  font-size: 18px;
+  padding: 8px 14px;
+  cursor: pointer;
+}
+
+.lightboxNav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  border: 3px solid var(--ink);
+  background: var(--yellow);
+  font-weight: 700;
+  font-size: 26px;
+  line-height: 1;
+  padding: 12px 18px;
+  cursor: pointer;
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.5);
+}
+.navPrev {
+  left: 16px;
+}
+.navNext {
+  right: 16px;
+}
+
+.lightboxCaption {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.lightboxLabel {
+  font-family: monospace;
+  font-size: 13px;
+  background: var(--bg);
+  border: 2px solid var(--ink);
+  padding: 4px 10px;
+}
+
+.lightboxCount {
+  color: var(--bg);
+  font-weight: 700;
+}
+
+@media (max-width: 640px) {
+  .lightboxNav {
+    top: auto;
+    bottom: 18px;
+    transform: none;
+  }
+  .lightboxImg {
+    max-height: 64vh;
+  }
+}
