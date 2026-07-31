@@ -3,11 +3,12 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { fetchFestivalData } from "@/lib/data";
 import { getBrowserSupabase } from "@/lib/supabase";
-import type { Activity, Artist, ArtistLinks, FestivalData, Photo, Settings } from "@/lib/types";
+import type { Activity, Artist, FestivalData, Photo, Settings } from "@/lib/types";
 import Activities from "./Activities";
 import AdminBanner from "./AdminBanner";
+import EditActivityModal, { type ActivityFields } from "./EditActivityModal";
+import EditArtistModal, { type ArtistFields } from "./EditArtistModal";
 import AdminsModal from "./AdminsModal";
-import EditLinksModal from "./EditLinksModal";
 import Footer from "./Footer";
 import Gallery from "./Gallery";
 import Hero from "./Hero";
@@ -33,6 +34,7 @@ export default function FestivalSite({ initialData, demoMode }: Props) {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [adminsOpen, setAdminsOpen] = useState(false);
   const [editingArtist, setEditingArtist] = useState<Artist | null>(null);
+  const [editingActivity, setEditingActivity] = useState<Activity | null>(null);
   const [uploading, setUploading] = useState(false);
 
   const refresh = useCallback(async () => {
@@ -185,12 +187,23 @@ export default function FestivalSite({ initialData, demoMode }: Props) {
     [supabase, refresh],
   );
 
-  const saveLinks = useCallback(
-    async (artist: Artist, links: ArtistLinks) => {
+  const saveArtist = useCallback(
+    async (artist: Artist, fields: ArtistFields) => {
       if (!supabase) return;
-      const { error } = await supabase.from("artists").update(links).eq("id", artist.id);
+      const { error } = await supabase.from("artists").update(fields).eq("id", artist.id);
       if (error) alert("Mise à jour impossible : " + error.message);
       setEditingArtist(null);
+      await refresh();
+    },
+    [supabase, refresh],
+  );
+
+  const saveActivity = useCallback(
+    async (activity: Activity, fields: ActivityFields) => {
+      if (!supabase) return;
+      const { error } = await supabase.from("activities").update(fields).eq("id", activity.id);
+      if (error) alert("Mise à jour impossible : " + error.message);
+      setEditingActivity(null);
       await refresh();
     },
     [supabase, refresh],
@@ -352,7 +365,7 @@ export default function FestivalSite({ initialData, demoMode }: Props) {
         artists={data.artists}
         adminOn={adminOn}
         onRemove={removeArtist}
-        onEditLinks={setEditingArtist}
+        onEdit={setEditingArtist}
         onAdd={addArtist}
       />
       <Marquee
@@ -364,6 +377,7 @@ export default function FestivalSite({ initialData, demoMode }: Props) {
         activities={data.activities}
         adminOn={adminOn}
         onRemove={removeActivity}
+        onEdit={setEditingActivity}
         onAdd={addActivity}
       />
       <Marquee
@@ -399,10 +413,17 @@ export default function FestivalSite({ initialData, demoMode }: Props) {
         />
       )}
       {editingArtist && (
-        <EditLinksModal
+        <EditArtistModal
           artist={editingArtist}
-          onSave={saveLinks}
+          onSave={saveArtist}
           onClose={() => setEditingArtist(null)}
+        />
+      )}
+      {editingActivity && (
+        <EditActivityModal
+          activity={editingActivity}
+          onSave={saveActivity}
+          onClose={() => setEditingActivity(null)}
         />
       )}
       {adminsOpen && supabase && (

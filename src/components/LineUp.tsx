@@ -17,7 +17,7 @@ type Props = {
   artists: Artist[];
   adminOn: boolean;
   onRemove: (artist: Artist) => void;
-  onEditLinks: (artist: Artist) => void;
+  onEdit: (artist: Artist) => void;
   onAdd: (fields: {
     name: string;
     genre: string;
@@ -31,7 +31,7 @@ type Props = {
 /** Fonds des cartes, en rotation — tout sauf le jaune de la section. */
 const CARD_BGS = ["var(--cream)", "var(--blue)", "var(--pink)", "var(--green)"];
 
-export default function LineUp({ artists, adminOn, onRemove, onEditLinks, onAdd }: Props) {
+export default function LineUp({ artists, adminOn, onRemove, onEdit, onAdd }: Props) {
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const form = e.currentTarget;
@@ -75,7 +75,11 @@ export default function LineUp({ artists, adminOn, onRemove, onEditLinks, onAdd 
     }));
     const maillot = MAILLOTS[i % MAILLOTS.length];
     return (
-      <div key={artist.id} className={styles.card} style={{ background: CARD_BGS[i % CARD_BGS.length] }}>
+      <div
+        key={artist.id}
+        className={styles.card}
+        style={{ background: CARD_BGS[i % CARD_BGS.length] }}
+      >
         <div className={styles.cardTop}>
           <div className={styles.badges}>
             {/* Dossard d'étape (déduit de la position, rien en base) */}
@@ -114,12 +118,8 @@ export default function LineUp({ artists, adminOn, onRemove, onEditLinks, onAdd 
           </div>
         )}
         {adminOn && (
-          <button
-            type="button"
-            className={styles.editLinksBtn}
-            onClick={() => onEditLinks(artist)}
-          >
-            🔗 Modifier les liens
+          <button type="button" className={styles.editLinksBtn} onClick={() => onEdit(artist)}>
+            ✏️ Modifier
           </button>
         )}
       </div>

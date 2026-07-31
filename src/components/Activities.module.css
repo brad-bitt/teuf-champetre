@@ -168,3 +168,13 @@
   font-style: italic;
   color: rgba(17, 17, 17, 0.6);
 }
+.editBtn {
+  align-self: flex-start;
+  border: 2px solid var(--ink);
+  background: #fff;
+  font-weight: 700;
+  font-size: 12px;
+  cursor: pointer;
+  padding: 4px 10px;
+  margin-top: 4px;
+}

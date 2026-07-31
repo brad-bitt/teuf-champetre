@@ -16,13 +16,14 @@ type Props = {
   activities: Activity[];
   adminOn: boolean;
   onRemove: (activity: Activity) => void;
+  onEdit: (activity: Activity) => void;
   onAdd: (fields: { name: string; slot: string; place: string }) => void;
 };
 
 /** Fonds des cartes, en rotation — tout sauf le bleu de la section. */
 const CARD_BGS = ["var(--cream)", "var(--yellow)", "var(--pink)", "var(--green)"];
 
-export default function Activities({ activities, adminOn, onRemove, onAdd }: Props) {
+export default function Activities({ activities, adminOn, onRemove, onEdit, onAdd }: Props) {
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const form = e.currentTarget;
@@ -85,6 +86,11 @@ export default function Activities({ activities, adminOn, onRemove, onAdd }: Pro
         </div>
         <div className={styles.name}>{activity.name}</div>
         <div className={styles.slot}>{slotWithoutDay(activity.slot)}</div>
+        {adminOn && (
+          <button type="button" className={styles.editBtn} onClick={() => onEdit(activity)}>
+            ✏️ Modifier
+          </button>
+        )}
       </div>
     );
   };

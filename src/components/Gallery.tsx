@@ -123,7 +123,15 @@ export default function Gallery({
         key={photo.id}
         className={classes}
         draggable={draggable}
-        onDragStart={draggable ? () => setDragIndex(i) : undefined}
+        onDragStart={
+          draggable
+            ? (e) => {
+                // Firefox exige un setData pour démarrer le drag
+                e.dataTransfer?.setData("text/plain", photo.id);
+                setDragIndex(i);
+              }
+            : undefined
+        }
         onDragOver={
           draggable
             ? (e) => {
