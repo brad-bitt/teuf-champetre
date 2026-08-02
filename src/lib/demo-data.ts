@@ -11,6 +11,7 @@ export const DEMO_DATA: FestivalData = {
     dates: "22–23 août",
     lieu: "Le grand champ, quelque part en campagne",
     billetterie_url: "#billetterie-bientot",
+    don_url: "https://www.helloasso.com/associations/le-bouquet/formulaires/1",
   },
   artists: [
     { id: "demo-1", name: "Bétonnière Sonore", genre: "Électro", slot: "Samedi · 23h30", spotify: null, soundcloud: null, instagram: null, position: 0 },

@@ -19,6 +19,8 @@ export default function SettingsModal({ settings, onSave, onClose }: Props) {
       dates: String(fd.get("dates") ?? "").trim() || settings.dates,
       lieu: String(fd.get("lieu") ?? "").trim() || settings.lieu,
       billetterie_url: String(fd.get("billetterie_url") ?? "").trim() || "#billetterie-bientot",
+      // Vide autorisé : le bouton don disparaît simplement du site
+      don_url: String(fd.get("don_url") ?? "").trim(),
     });
   };
 
@@ -48,6 +50,15 @@ export default function SettingsModal({ settings, onSave, onClose }: Props) {
               name="billetterie_url"
               defaultValue={settings.billetterie_url}
               placeholder="https://shotgun.live/..."
+              className={styles.input}
+            />
+          </label>
+          <label className={styles.field}>
+            URL don (laisser vide pour masquer le bouton)
+            <input
+              name="don_url"
+              defaultValue={settings.don_url}
+              placeholder="https://www.helloasso.com/..."
               className={styles.input}
             />
           </label>

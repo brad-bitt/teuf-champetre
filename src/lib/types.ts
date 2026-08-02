@@ -37,6 +37,8 @@ export type Settings = {
   dates: string;
   lieu: string;
   billetterie_url: string;
+  /** URL de la cagnotte HelloAsso — vide ⇒ le bouton don est masqué. */
+  don_url: string;
 };
 
 export type FestivalData = {

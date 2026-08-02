@@ -26,6 +26,16 @@ export default function Hero({ settings }: { settings: Settings }) {
           >
             Rejoindre le peloton ↗
           </a>
+          {settings.don_url && (
+            <a
+              href={settings.don_url}
+              target="_blank"
+              rel="noreferrer"
+              className={styles.ctaDon}
+            >
+              💛 Faire un don
+            </a>
+          )}
           <div className={styles.place}>📍 {settings.lieu}</div>
         </div>
       </div>
