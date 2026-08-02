@@ -3,6 +3,7 @@ import { cache } from "react";
 import FestivalSite from "@/components/FestivalSite";
 import { fetchFestivalData } from "@/lib/data";
 import { DEMO_DATA } from "@/lib/demo-data";
+import { parseFestivalDates } from "@/lib/festival-dates";
 import { SITE_NAME, SITE_URL } from "@/lib/site";
 import { getServerSupabase } from "@/lib/supabase";
 
@@ -65,33 +66,44 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function Page() {
   const { data, demoMode } = await loadFestival();
-  const { edition, dates, billetterie_url } = data.settings;
+  const { edition, dates } = data.settings;
   const lieu = cleanLieu(data.settings.lieu);
 
   /**
    * Données structurées schema.org : décrivent le festival aux moteurs de
-   * recherche (nom, lieu, artistes, billetterie) — aide Google à comprendre
-   * que « Teuf Champêtre » est un événement musical.
+   * recherche — aide Google à comprendre que « Teuf Champêtre » est un
+   * événement musical. Google exige un startDate ISO (champ critique) : on le
+   * reconstruit depuis le texte libre du back-office ; si le texte n'est pas
+   * reconnu, on émet un simple schéma WebSite plutôt qu'un Event invalide.
    */
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Festival",
-    name: SITE_NAME,
-    alternateName: "Teuf Champetre",
-    description: `${SITE_NAME} ${edition} — festival de musique entre copains, ${dates}, thème Tour de France.`,
-    url: SITE_URL,
-    image: `${SITE_URL}/opengraph-image`,
-    eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
-    location: {
-      "@type": "Place",
-      name: lieu,
-      address: { "@type": "PostalAddress", addressCountry: "FR" },
-    },
-    performer: data.artists.map((a) => ({ "@type": "MusicGroup", name: a.name })),
-    ...(billetterie_url
-      ? { offers: { "@type": "Offer", url: billetterie_url } }
-      : {}),
-  };
+  const parsedDates = parseFestivalDates(dates, edition);
+  const jsonLd = parsedDates
+    ? {
+        "@context": "https://schema.org",
+        "@type": "Festival",
+        name: SITE_NAME,
+        alternateName: "Teuf Champetre",
+        description: `${SITE_NAME} ${edition} — festival de musique entre copains, ${dates}, thème Tour de France.`,
+        url: SITE_URL,
+        image: `${SITE_URL}/opengraph-image`,
+        startDate: parsedDates.startDate,
+        endDate: parsedDates.endDate,
+        eventStatus: "https://schema.org/EventScheduled",
+        eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+        organizer: { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
+        location: {
+          "@type": "Place",
+          name: lieu,
+          address: { "@type": "PostalAddress", addressCountry: "FR" },
+        },
+        performer: data.artists.map((a) => ({ "@type": "MusicGroup", name: a.name })),
+      }
+    : {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        name: SITE_NAME,
+        url: SITE_URL,
+      };
 
   return (
     <>
