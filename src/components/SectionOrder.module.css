@@ -7,10 +7,11 @@
 }
 
 /* Enveloppe d'une pastille : porte la position et l'esquive de la souris
-   (transform piloté en JS, amorti par la transition) */
+   (transform piloté en JS, amorti par la transition). Cliquable : attraper
+   une pastille fait sonner la sonnette. */
 .stickerPos {
   position: absolute;
-  pointer-events: none;
+  cursor: pointer;
   z-index: 1;
   transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
   will-change: transform;

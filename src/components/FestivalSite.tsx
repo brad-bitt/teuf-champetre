@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
+import { ringBell } from "@/lib/bell";
 import { fetchFestivalData } from "@/lib/data";
 import { SECTION_STICKERS } from "@/lib/deco";
 import { getBrowserSupabase } from "@/lib/supabase";
@@ -581,6 +582,15 @@ export default function FestivalSite({ initialData, demoMode }: Props) {
                 data-dodge=""
                 style={{ ...position, width: s.size, height: s.size }}
                 aria-hidden="true"
+                // Easter egg : attraper une pastille (elle esquive !) la fait
+                // sonner comme une sonnette de vélo, avec un petit rebond
+                onClick={(e) => {
+                  ringBell();
+                  e.currentTarget.firstElementChild?.animate(
+                    [{ scale: "1" }, { scale: "1.3" }, { scale: "1" }],
+                    { duration: 250, easing: "ease-out" },
+                  );
+                }}
               >
                 <span
                   className={sectionStyles.sticker}
