@@ -96,3 +96,14 @@ html[data-motion="on"] [data-reveal]:not([data-reveal="in"]) > * {
     scroll-behavior: auto;
   }
 }
+
+/* Barre de scroll native masquée : le cycliste du bord droit sert de repère
+   de progression (le scroll molette/clavier/tactile fonctionne normalement). */
+html {
+  scrollbar-width: none;
+}
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
