@@ -97,6 +97,9 @@ export default function FestivalSite({ initialData, demoMode }: Props) {
     const KICK = 3.2; // impulsion max ajoutée à la vitesse par frame de souris
     const FRICTION = 0.955; // glisse : la vitesse s'éteint doucement
     const BOUNCE = 0.8; // énergie conservée en rebondissant sur une paroi
+    // Rebond minimum : même poussée contre la paroi, elle repart franchement
+    // au lieu de mourir collée au bord
+    const MIN_REBOUND = 9;
     // Centre de repos en coordonnées document, capturé au premier passage
     // (offset nul à ce moment-là) : aucune mesure faussée ensuite.
     type Ball = { el: HTMLElement; baseX: number; baseY: number; x: number; y: number; vx: number; vy: number };
@@ -153,19 +156,19 @@ export default function FestivalSite({ initialData, demoMode }: Props) {
         const newCx = b.baseX + b.x;
         if (newCx - half < 4) {
           b.x = half + 4 - b.baseX;
-          b.vx = Math.abs(b.vx) * BOUNCE;
+          b.vx = Math.max(Math.abs(b.vx) * BOUNCE, MIN_REBOUND);
         } else if (newCx + half > window.innerWidth - 4) {
           b.x = window.innerWidth - half - 4 - b.baseX;
-          b.vx = -Math.abs(b.vx) * BOUNCE;
+          b.vx = -Math.max(Math.abs(b.vx) * BOUNCE, MIN_REBOUND);
         }
         const docH = document.documentElement.scrollHeight;
         const newCy = b.baseY + b.y;
         if (newCy - half < 4) {
           b.y = half + 4 - b.baseY;
-          b.vy = Math.abs(b.vy) * BOUNCE;
+          b.vy = Math.max(Math.abs(b.vy) * BOUNCE, MIN_REBOUND);
         } else if (newCy + half > docH - 4) {
           b.y = docH - half - 4 - b.baseY;
-          b.vy = -Math.abs(b.vy) * BOUNCE;
+          b.vy = -Math.max(Math.abs(b.vy) * BOUNCE, MIN_REBOUND);
         }
         b.el.style.transform = `translate(${b.x}px, ${b.y}px)`;
       }
