@@ -15,38 +15,41 @@ type Sticker = {
   emoji: string;
   /** Couleur de la pastille (palette du site, différente du fond de la section). */
   bg: string;
-  /** Position sur les bords de la section — négatif ⇒ demi-cercle qui dépasse. */
+  /** Diamètre de la pastille en px — volontairement irrégulier d'une pastille à l'autre. */
+  size: number;
+  /** Position éparpillée dans la section — négatif ⇒ demi-cercle qui dépasse du bord. */
   style: CSSProperties;
 };
 
 /**
  * Pastilles rondes façon décorations du hero (soleil, rond à pois) : un émoji
- * dans un cercle bordé de noir, posé à cheval sur le bord de la section.
- * Un 🍄 par section — le motif classique de la Teuf. Les positions hautes
- * passent sous le bandeau défilant (~40px).
+ * dans un cercle bordé de noir. Tailles et positions volontairement
+ * irrégulières, « éparpillées à la main » (pas de vrai aléatoire : le rendu
+ * serveur et le client doivent produire le même HTML). Un 🍄 par section —
+ * le motif classique de la Teuf.
  */
 export const SECTION_STICKERS: Record<SectionKey, Sticker[]> = {
   // Section jaune
   lineup: [
-    { emoji: "🌻", bg: "var(--pink)", style: { top: 90, left: -26, transform: "rotate(-10deg)" } },
-    { emoji: "🍄", bg: "var(--cream)", style: { top: 220, right: -28, transform: "rotate(8deg)" } },
-    { emoji: "🏆", bg: "var(--green)", style: { bottom: 60, left: -30, transform: "rotate(6deg)" } },
+    { emoji: "🌻", bg: "var(--pink)", size: 78, style: { top: "9%", left: -26, transform: "rotate(-10deg)" } },
+    { emoji: "🍄", bg: "var(--cream)", size: 52, style: { top: "34%", right: "5%", transform: "rotate(8deg)" } },
+    { emoji: "🏆", bg: "var(--green)", size: 66, style: { bottom: "11%", left: "3%", transform: "rotate(6deg)" } },
   ],
   // Section bleue
   activities: [
-    { emoji: "🍄", bg: "var(--yellow)", style: { top: 110, right: -26, transform: "rotate(10deg)" } },
-    { emoji: "🌾", bg: "var(--pink)", style: { bottom: 70, left: -28, transform: "rotate(-8deg)" } },
+    { emoji: "🍄", bg: "var(--yellow)", size: 88, style: { top: "24%", right: -32, transform: "rotate(10deg)" } },
+    { emoji: "🌾", bg: "var(--pink)", size: 46, style: { top: "58%", left: "6%", transform: "rotate(-8deg)" } },
   ],
   // Section orange
   infos: [
-    { emoji: "🚜", bg: "var(--cream)", style: { top: 100, left: -26, transform: "rotate(-6deg)" } },
-    { emoji: "🍄", bg: "var(--yellow)", style: { bottom: 130, left: -30, transform: "rotate(-9deg)" } },
-    { emoji: "🧺", bg: "var(--green)", style: { bottom: 50, right: -28, transform: "rotate(8deg)" } },
+    { emoji: "🚜", bg: "var(--cream)", size: 70, style: { top: "13%", left: "4%", transform: "rotate(-6deg)" } },
+    { emoji: "🍄", bg: "var(--yellow)", size: 44, style: { bottom: "17%", left: -16, transform: "rotate(-9deg)" } },
+    { emoji: "🧺", bg: "var(--green)", size: 58, style: { bottom: "31%", right: "5%", transform: "rotate(8deg)" } },
   ],
   // Section verte
   gallery: [
-    { emoji: "🌼", bg: "var(--pink)", style: { top: 100, right: -26, transform: "rotate(-8deg)" } },
-    { emoji: "🍄", bg: "var(--cream)", style: { top: 240, left: -28, transform: "rotate(9deg)" } },
-    { emoji: "🚵", bg: "var(--yellow)", style: { bottom: 70, right: -30, transform: "rotate(6deg)" } },
+    { emoji: "🌼", bg: "var(--pink)", size: 50, style: { top: "10%", right: "7%", transform: "rotate(-8deg)" } },
+    { emoji: "🍄", bg: "var(--cream)", size: 74, style: { top: "47%", left: -28, transform: "rotate(9deg)" } },
+    { emoji: "🚵", bg: "var(--yellow)", size: 62, style: { bottom: "7%", right: -22, transform: "rotate(6deg)" } },
   ],
 };
