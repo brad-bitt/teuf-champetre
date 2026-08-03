@@ -28,6 +28,7 @@ import LineUp from "./LineUp";
 import LoginModal from "./LoginModal";
 import Marquee from "./Marquee";
 import Nav from "./Nav";
+import ScrollBike from "./ScrollBike";
 import SettingsModal from "./SettingsModal";
 import sectionStyles from "./SectionOrder.module.css";
 
@@ -510,13 +511,20 @@ export default function FestivalSite({ initialData, demoMode }: Props) {
 
   return (
     <div>
+      <ScrollBike />
       <Nav billetterieUrl={data.settings.billetterie_url} />
       <Hero settings={data.settings} />
       {sectionOrder.map((key, i) => (
         <div key={key} className={sectionStyles.wrap}>
           {sections[key]}
-          {SECTION_STICKERS[key].map((s) => (
-            <span key={s.emoji} className={sectionStyles.sticker} style={s.style} aria-hidden="true">
+          {SECTION_STICKERS[key].map((s, j) => (
+            <span
+              key={`${key}-${j}`}
+              className={sectionStyles.sticker}
+              // Délais décalés pour que les stickers ne flottent pas en chœur
+              style={{ ...s.style, animationDelay: `${((i * 2 + j) % 4) * 0.9}s` }}
+              aria-hidden="true"
+            >
               {s.emoji}
             </span>
           ))}

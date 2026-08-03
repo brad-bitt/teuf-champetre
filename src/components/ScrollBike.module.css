@@ -1,20 +1,39 @@
-/* Piste invisible collée à la bordure basse de la nav (le trait noir = la route) */
+/* Route verticale le long du bord droit : le vélo descend au fil du scroll */
 .track {
   --p: 0;
-  position: absolute;
-  left: 10px;
-  right: 34px; /* laisse le vélo finir juste avant le bord */
-  bottom: -4px; /* posé sur la bordure de 4px de la nav */
-  height: 0;
+  position: fixed;
+  top: 84px; /* démarre sous la nav sticky */
+  bottom: 24px;
+  right: 4px;
+  width: 34px;
   pointer-events: none;
+  z-index: 40; /* sous la nav (50), au-dessus du contenu */
+}
+
+/* Le tracé de l'étape, en pointillés discrets */
+.track::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  border-left: 3px dashed rgba(17, 17, 17, 0.3);
 }
 
 .bike {
   position: absolute;
-  left: calc(var(--p) * 100%);
-  bottom: 1px;
-  font-size: 21px;
+  top: calc(var(--p) * 100%);
+  left: 50%;
+  font-size: 30px;
   line-height: 1;
-  /* L'emoji regarde à gauche : on le retourne pour rouler vers l'arrivée */
-  transform: translateX(-50%) scaleX(-1);
+  /* L'emoji regarde à gauche : pivoté pour descendre la route */
+  transform: translate(-50%, -50%) rotate(-90deg);
+  filter: drop-shadow(2px 2px 0 rgba(17, 17, 17, 0.3));
+}
+
+/* Sur mobile le bord droit est trop précieux */
+@media (max-width: 720px) {
+  .track {
+    display: none;
+  }
 }

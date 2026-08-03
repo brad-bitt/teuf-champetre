@@ -1,10 +1,8 @@
-import ScrollBike from "./ScrollBike";
 import styles from "./Nav.module.css";
 
 export default function Nav({ billetterieUrl }: { billetterieUrl: string }) {
   return (
     <nav className={styles.nav}>
-      <ScrollBike />
       <div className={styles.logo}>Teuf Champêtre</div>
       <div className={styles.links}>
         <a href="#lineup" className={styles.link}>
