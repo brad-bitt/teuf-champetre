@@ -4,6 +4,8 @@
  * Déclenché en cliquant sur le titre du hero, mémorisé dans le navigateur.
  */
 
+import { startDisco, stopDisco } from "./discoMusic";
+
 const STORAGE_KEY = "teuf-mode-fete";
 
 /** Réapplique le choix mémorisé (à appeler au montage, côté client). */
@@ -18,8 +20,11 @@ export function toggleFeteMode(): boolean {
   const on = document.documentElement.dataset.fete !== "on";
   if (on) {
     document.documentElement.dataset.fete = "on";
+    // Déclenché par un clic ⇒ l'autoplay est autorisé par le navigateur
+    startDisco();
   } else {
     delete document.documentElement.dataset.fete;
+    stopDisco();
   }
   localStorage.setItem(STORAGE_KEY, on ? "on" : "off");
   return on;
