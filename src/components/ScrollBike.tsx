@@ -5,8 +5,8 @@ import { SCROLL_RIDER } from "@/lib/deco";
 import styles from "./ScrollBike.module.css";
 
 /**
- * Le cycliste qui roule sur la bordure basse de la nav : sa position suit la
- * progression de lecture (haut de page → départ, footer → ligne d'arrivée).
+ * Le cycliste qui descend la route pointillée du bord droit : sa position suit
+ * la progression de lecture (haut de page → départ, footer → ligne d'arrivée).
  * Purement décoratif — aria-hidden, aucune interaction.
  */
 export default function ScrollBike() {

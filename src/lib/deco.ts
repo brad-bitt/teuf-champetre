@@ -18,14 +18,16 @@ type Sticker = {
 };
 
 /**
- * Stickers posés « à la main » dans les coins des sections — 2 par section
- * maximum pour ne pas surcharger. Les positions hautes (top: 54px) passent
- * sous le bandeau défilant ; les flèches admin vivent à top: 8px à droite.
+ * Stickers posés « à la main » dans les coins des sections — 3 par section
+ * maximum pour ne pas surcharger, avec un 🍄 par section (le motif classique
+ * de la Teuf). Les positions hautes (top: ~58px) passent sous le bandeau
+ * défilant ; les flèches admin vivent à top: 8px à droite.
  */
 export const SECTION_STICKERS: Record<SectionKey, Sticker[]> = {
   lineup: [
     { emoji: "🌻", style: { top: 58, left: 16, transform: "rotate(-12deg)" } },
-    { emoji: "🐓", style: { bottom: 22, right: 22, transform: "rotate(8deg)" } },
+    { emoji: "🐓", style: { bottom: 22, left: 20, transform: "rotate(-6deg)" } },
+    { emoji: "🍄", style: { bottom: 26, right: 22, transform: "rotate(8deg)" } },
   ],
   activities: [
     { emoji: "🍄", style: { top: 60, right: 28, transform: "rotate(12deg)" } },
@@ -33,10 +35,12 @@ export const SECTION_STICKERS: Record<SectionKey, Sticker[]> = {
   ],
   infos: [
     { emoji: "⛰️", style: { top: 58, left: 20, transform: "rotate(-6deg)" } },
+    { emoji: "🍄", style: { bottom: 24, left: 24, transform: "rotate(-10deg)" } },
     { emoji: "🧺", style: { bottom: 22, right: 26, transform: "rotate(10deg)" } },
   ],
   gallery: [
     { emoji: "🌼", style: { top: 58, right: 34, transform: "rotate(-10deg)" } },
     { emoji: "🚵", style: { bottom: 24, left: 18, transform: "rotate(6deg)" } },
+    { emoji: "🍄", style: { top: 62, left: 22, transform: "rotate(9deg)" } },
   ],
 };
