@@ -8,8 +8,12 @@ let ctx: AudioContext | null = null;
 let master: GainNode | null = null;
 let noiseBuffer: AudioBuffer | null = null;
 let timer: ReturnType<typeof setInterval> | null = null;
+let stopTimer: ReturnType<typeof setTimeout> | null = null;
 let nextTime = 0;
 let step = 0;
+
+/** Le groove est un jingle d'ouverture : il s'arrête tout seul au bout de 10 s. */
+const DUREE_MS = 10_000;
 
 const TEMPO = 118;
 const STEP = 60 / TEMPO / 2; // croches
@@ -88,13 +92,16 @@ export function startDisco() {
     if (ctx.state === "suspended") void ctx.resume();
     if (!master) {
       master = ctx.createGain();
-      master.gain.value = 0.8;
       master.connect(ctx.destination);
     }
+    // Repart à plein volume (annule un éventuel fondu de sortie précédent)
+    master.gain.cancelScheduledValues(ctx.currentTime);
+    master.gain.setValueAtTime(0.8, ctx.currentTime);
     nextTime = ctx.currentTime + 0.06;
     step = 0;
     schedule();
     timer = setInterval(schedule, 100);
+    stopTimer = setTimeout(stopDisco, DUREE_MS);
   } catch {
     // Pas d'audio : la boule disco descendra en silence
   }
@@ -102,5 +109,13 @@ export function startDisco() {
 
 export function stopDisco() {
   if (timer) clearInterval(timer);
-  timer = null; // les notes déjà programmées finissent leur (court) sustain
+  timer = null;
+  if (stopTimer) clearTimeout(stopTimer);
+  stopTimer = null;
+  // Fondu de sortie : les dernières notes programmées s'éteignent en douceur
+  if (ctx && master) {
+    master.gain.cancelScheduledValues(ctx.currentTime);
+    master.gain.setValueAtTime(master.gain.value, ctx.currentTime);
+    master.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.9);
+  }
 }
