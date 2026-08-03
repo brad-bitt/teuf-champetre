@@ -2,16 +2,24 @@
 
 .wrap {
   position: relative;
+  /* Clippe les pastilles à cheval sur les bords en demi-cercles */
+  overflow: hidden;
 }
 
-/* Stickers champêtres posés dans les zones de padding des sections */
+/* Pastilles déco façon hero (soleil, rond à pois) : émoji dans un cercle bordé */
 .sticker {
   position: absolute;
-  font-size: clamp(28px, 3.4vw, 42px);
+  width: clamp(56px, 6vw, 84px);
+  height: clamp(56px, 6vw, 84px);
+  border-radius: 50%;
+  border: 4px solid var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(26px, 3vw, 40px);
   line-height: 1;
   pointer-events: none;
-  filter: drop-shadow(3px 3px 0 rgba(17, 17, 17, 0.85));
-  z-index: 2;
+  z-index: 1;
 }
 
 /* Flottement léger — la propriété `translate` se compose avec le rotate inline */
