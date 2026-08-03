@@ -522,7 +522,14 @@ export default function FestivalSite({ initialData, demoMode }: Props) {
               key={`${key}-${j}`}
               className={sectionStyles.sticker}
               // Délais décalés pour que les pastilles ne flottent pas en chœur
-              style={{ ...s.style, background: s.bg, animationDelay: `${((i * 2 + j) % 4) * 0.9}s` }}
+              style={{
+                ...s.style,
+                background: s.bg,
+                width: s.size,
+                height: s.size,
+                fontSize: Math.round(s.size * 0.48),
+                animationDelay: `${((i * 2 + j) % 4) * 0.9}s`,
+              }}
               aria-hidden="true"
             >
               {s.emoji}
