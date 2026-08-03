@@ -85,55 +85,109 @@ export default function FestivalSite({ initialData, demoMode }: Props) {
     return () => observer.disconnect();
   }, [data]);
 
-  // Les pastilles esquivent la souris : une seule écoute mousemove (rAF),
-  // poussée proportionnelle à la proximité, amortie par la transition CSS.
-  // Coupé sans souris (tactile) et si l'utilisateur réduit les animations.
+  // Les pastilles fuient la souris — et la poussée s'ACCUMULE : pas de retour
+  // élastique, on peut les balader n'importe où sur le site en les chassant.
+  // Une seule écoute mousemove (rAF). Coupé sans souris (tactile) et si
+  // l'utilisateur réduit les animations.
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     if (!window.matchMedia("(pointer: fine)").matches) return;
 
-    const RADIUS = 150; // distance à laquelle la pastille commence à fuir
-    const PUSH = 70; // déplacement maximum en px
-    const offsets = new WeakMap<Element, { x: number; y: number }>();
+    const RADIUS = 150; // distance à laquelle la souris commence à pousser
+    const KICK = 3.2; // impulsion max ajoutée à la vitesse par frame de souris
+    const FRICTION = 0.955; // glisse : la vitesse s'éteint doucement
+    const BOUNCE = 0.8; // énergie conservée en rebondissant sur une paroi
+    // Centre de repos en coordonnées document, capturé au premier passage
+    // (offset nul à ce moment-là) : aucune mesure faussée ensuite.
+    type Ball = { el: HTMLElement; baseX: number; baseY: number; x: number; y: number; vx: number; vy: number };
+    let balls: Ball[] | null = null;
     let mx = -10_000;
     let my = -10_000;
     let raf = 0;
 
-    const tick = () => {
-      raf = 0;
-      document.querySelectorAll<HTMLElement>("[data-dodge]").forEach((el) => {
-        const cur = offsets.get(el) ?? { x: 0, y: 0 };
+    const collect = () => {
+      balls = [...document.querySelectorAll<HTMLElement>("[data-dodge]")].map((el) => {
         const rect = el.getBoundingClientRect();
-        // Centre « au repos » : on retranche la translation réellement rendue
-        // (en cours de transition, elle diffère de la cible posée en style)
-        const rendered = getComputedStyle(el).transform;
-        const m = rendered && rendered !== "none" ? new DOMMatrix(rendered) : { e: 0, f: 0 };
-        const cx = rect.left + rect.width / 2 - m.e;
-        const cy = rect.top + rect.height / 2 - m.f;
+        return {
+          el,
+          baseX: rect.left + rect.width / 2 + window.scrollX,
+          baseY: rect.top + rect.height / 2 + window.scrollY,
+          x: 0,
+          y: 0,
+          vx: 0,
+          vy: 0,
+        };
+      });
+    };
+
+    const frame = () => {
+      raf = 0;
+      // (Re)capture si premier passage ou si React a re-rendu les sections
+      if (!balls || balls.some((b) => !b.el.isConnected)) collect();
+      let moving = false;
+      for (const b of balls!) {
+        const half = b.el.offsetWidth / 2;
+        // Position actuelle du centre, dans le viewport et dans le document
+        const cx = b.baseX + b.x - window.scrollX;
+        const cy = b.baseY + b.y - window.scrollY;
+
+        // Poussée de la souris → gain de vitesse (et pas simple déplacement)
         const dx = cx - mx;
         const dy = cy - my;
         const dist = Math.hypot(dx, dy);
-        let x = 0;
-        let y = 0;
         if (dist > 0 && dist < RADIUS) {
-          const force = ((RADIUS - dist) / RADIUS) * PUSH;
-          x = (dx / dist) * force;
-          y = (dy / dist) * force;
+          const kick = ((RADIUS - dist) / RADIUS) * KICK;
+          b.vx += (dx / dist) * kick;
+          b.vy += (dy / dist) * kick;
         }
-        if (x !== cur.x || y !== cur.y) {
-          offsets.set(el, { x, y });
-          el.style.transform = `translate(${x}px, ${y}px)`;
+
+        b.vx *= FRICTION;
+        b.vy *= FRICTION;
+        if (Math.abs(b.vx) < 0.05 && Math.abs(b.vy) < 0.05) continue;
+        moving = true;
+        b.x += b.vx;
+        b.y += b.vy;
+
+        // Rebonds sur les parois : bords gauche/droit de l'écran,
+        // haut et bas du document
+        const newCx = b.baseX + b.x;
+        if (newCx - half < 4) {
+          b.x = half + 4 - b.baseX;
+          b.vx = Math.abs(b.vx) * BOUNCE;
+        } else if (newCx + half > window.innerWidth - 4) {
+          b.x = window.innerWidth - half - 4 - b.baseX;
+          b.vx = -Math.abs(b.vx) * BOUNCE;
         }
-      });
+        const docH = document.documentElement.scrollHeight;
+        const newCy = b.baseY + b.y;
+        if (newCy - half < 4) {
+          b.y = half + 4 - b.baseY;
+          b.vy = Math.abs(b.vy) * BOUNCE;
+        } else if (newCy + half > docH - 4) {
+          b.y = docH - half - 4 - b.baseY;
+          b.vy = -Math.abs(b.vy) * BOUNCE;
+        }
+        b.el.style.transform = `translate(${b.x}px, ${b.y}px)`;
+      }
+      // La boucle continue tant qu'une pastille glisse encore
+      if (moving && !raf) raf = requestAnimationFrame(frame);
     };
+
     const onMove = (e: MouseEvent) => {
       mx = e.clientX;
       my = e.clientY;
-      if (!raf) raf = requestAnimationFrame(tick);
+      if (!raf) raf = requestAnimationFrame(frame);
+    };
+    // Au redimensionnement, les positions en % bougent : on repart de zéro
+    const onResize = () => {
+      balls?.forEach((b) => (b.el.style.transform = ""));
+      balls = null;
     };
     window.addEventListener("mousemove", onMove, { passive: true });
+    window.addEventListener("resize", onResize);
     return () => {
       window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("resize", onResize);
       if (raf) cancelAnimationFrame(raf);
     };
   }, []);

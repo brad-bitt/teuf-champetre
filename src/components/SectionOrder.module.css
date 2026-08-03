@@ -1,9 +1,10 @@
 /* Enveloppe de section : ancre les stickers déco et les flèches admin */
 
+/* Pas d'overflow hidden : les pastilles poussées par la souris peuvent
+   voyager hors de leur section (le débordement horizontal est clippé au
+   niveau de la page, dans globals.css) */
 .wrap {
   position: relative;
-  /* Clippe les pastilles à cheval sur les bords en demi-cercles */
-  overflow: hidden;
 }
 
 /* Enveloppe d'une pastille : porte la position et l'esquive de la souris
@@ -12,7 +13,8 @@
   position: absolute;
   pointer-events: none;
   z-index: 1;
-  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  /* Pas de transition : la position est animée image par image (physique
+     à élan + rebonds dans FestivalSite) */
   will-change: transform;
 }
 
