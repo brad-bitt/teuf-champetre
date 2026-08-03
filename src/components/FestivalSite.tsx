@@ -96,10 +96,10 @@ export default function FestivalSite({ initialData, demoMode }: Props) {
     const RADIUS = 150; // distance à laquelle la souris commence à pousser
     const KICK = 3.2; // impulsion max ajoutée à la vitesse par frame de souris
     const FRICTION = 0.955; // glisse : la vitesse s'éteint doucement
-    const BOUNCE = 0.8; // énergie conservée en rebondissant sur une paroi
+    const BOUNCE = 0.95; // parois très élastiques : quasi toute l'énergie rendue
     // Rebond minimum : même poussée contre la paroi, elle repart franchement
     // au lieu de mourir collée au bord
-    const MIN_REBOUND = 9;
+    const MIN_REBOUND = 22;
     // Centre de repos en coordonnées document, capturé au premier passage
     // (offset nul à ce moment-là) : aucune mesure faussée ensuite.
     type Ball = { el: HTMLElement; baseX: number; baseY: number; x: number; y: number; vx: number; vy: number };

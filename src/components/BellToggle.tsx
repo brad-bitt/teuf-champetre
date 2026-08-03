@@ -1,16 +1,16 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ringBell } from "@/lib/bell";
+import { announceTeuf } from "@/lib/announce";
 import styles from "./BellToggle.module.css";
 
 const STORAGE_KEY = "teuf-sonnette";
 
 /**
- * La sonnette de vélo qui « dring » à chaque clic sur le site, avec son
- * interrupteur 🔔/🔕 (choix mémorisé dans le navigateur). Le React onClick du
- * bouton s'exécute avant l'écouteur global (attaché à window) : couper la
- * sonnette ne sonne donc pas, la réactiver sonne en guise de confirmation.
+ * L'annonce « TEUF CHAMPÊTRE ! » qui claque à chaque clic sur le site, avec
+ * son interrupteur 📣/🔇 (choix mémorisé dans le navigateur). Le React onClick
+ * du bouton s'exécute avant l'écouteur global (attaché à window) : couper le
+ * son ne crie donc pas, le réactiver crie en guise de confirmation.
  */
 export default function BellToggle() {
   const [enabled, setEnabled] = useState(true);
@@ -28,7 +28,7 @@ export default function BellToggle() {
 
   useEffect(() => {
     const onClick = () => {
-      if (enabledRef.current) ringBell();
+      if (enabledRef.current) announceTeuf();
     };
     window.addEventListener("click", onClick);
     return () => window.removeEventListener("click", onClick);
@@ -47,10 +47,10 @@ export default function BellToggle() {
       className={styles.btn}
       onClick={toggle}
       aria-pressed={enabled}
-      aria-label={enabled ? "Couper la sonnette au clic" : "Réactiver la sonnette au clic"}
-      title={enabled ? "Sonnette au clic : activée" : "Sonnette au clic : coupée"}
+      aria-label={enabled ? "Couper l'annonce au clic" : "Réactiver l'annonce au clic"}
+      title={enabled ? "« Teuf Champêtre ! » au clic : activé" : "« Teuf Champêtre ! » au clic : coupé"}
     >
-      {enabled ? "🔔" : "🔕"}
+      {enabled ? "📣" : "🔇"}
     </button>
   );
 }
