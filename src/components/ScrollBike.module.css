@@ -3,7 +3,7 @@
   --p: 0;
   position: fixed;
   top: 84px; /* démarre sous la nav sticky */
-  bottom: 24px;
+  bottom: 70px; /* s'arrête au-dessus du bouton sonnette */
   right: 4px;
   width: 34px;
   pointer-events: none;
