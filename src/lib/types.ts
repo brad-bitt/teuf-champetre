@@ -39,6 +39,8 @@ export type Settings = {
   dates: string;
   lieu: string;
   billetterie_url: string;
+  /** URL de la cagnotte HelloAsso — vide ⇒ le bouton don est masqué. */
+  don_url: string;
   /** Début de l'événement (ISO) pour le compte à rebours — null/absent ⇒ pas de compte à rebours. */
   event_start?: string | null;
 };

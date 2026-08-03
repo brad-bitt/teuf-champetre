@@ -1,15 +1,16 @@
 import { ImageResponse } from "next/og";
 
 /**
- * Image d'aperçu de partage (WhatsApp, Instagram, iMessage…), générée au build
- * dans le style néo-brutaliste du site — aucun fichier image à maintenir.
+ * Image de partage (Open Graph / Twitter) générée au build dans le style
+ * néo-brutaliste du site. Next l'expose en /opengraph-image et ajoute
+ * automatiquement les balises og:image / twitter:image.
  */
 
-export const alt = "Teuf Champêtre — Édition 2026, thème Tour de France";
+export const alt = "Teuf Champêtre — le festival entre copains, thème Tour de France";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-export default function OgImage() {
+export default function OpengraphImage() {
   return new ImageResponse(
     (
       <div
@@ -18,39 +19,51 @@ export default function OgImage() {
           height: "100%",
           display: "flex",
           flexDirection: "column",
-          alignItems: "flex-start",
+          alignItems: "center",
           justifyContent: "center",
-          gap: 28,
-          padding: 80,
-          background: "#ffd23f",
-          color: "#111111",
-          fontFamily: "sans-serif",
+          background: "#f5f0e6",
+          border: "16px solid #111",
+          position: "relative",
         }}
       >
+        {/* Soleil jaune, clin d'œil au hero */}
+        <div
+          style={{
+            position: "absolute",
+            top: 60,
+            right: 80,
+            width: 160,
+            height: 160,
+            borderRadius: 9999,
+            background: "#ffd23f",
+            border: "6px solid #111",
+          }}
+        />
         <div
           style={{
             display: "flex",
-            background: "#111111",
-            color: "#ffd23f",
-            padding: "12px 28px",
-            fontSize: 32,
-            fontWeight: 700,
-            textTransform: "uppercase",
-            letterSpacing: 2,
-            transform: "rotate(-2deg)",
+            background: "#ff5fa8",
+            border: "6px solid #111",
+            padding: "10px 28px",
+            fontSize: 34,
+            color: "#111",
+            boxShadow: "10px 10px 0 #111",
+            marginBottom: 44,
           }}
         >
-          Édition 2026 · 🚴 Thème vélo
+          🚴 Festival entre copains · Thème vélo
         </div>
         <div
           style={{
             display: "flex",
             flexDirection: "column",
-            fontSize: 148,
-            fontWeight: 900,
+            alignItems: "center",
+            fontSize: 150,
+            fontWeight: 800,
+            color: "#111",
+            lineHeight: 1.02,
             textTransform: "uppercase",
-            lineHeight: 0.95,
-            letterSpacing: -3,
+            letterSpacing: -4,
           }}
         >
           <span>Teuf</span>
@@ -59,15 +72,16 @@ export default function OgImage() {
         <div
           style={{
             display: "flex",
-            background: "#ffffff",
-            border: "6px solid #111111",
-            boxShadow: "12px 12px 0 #111111",
-            padding: "16px 32px",
-            fontSize: 34,
-            fontWeight: 700,
+            marginTop: 48,
+            background: "#a6e05a",
+            border: "6px solid #111",
+            padding: "12px 32px",
+            fontSize: 36,
+            color: "#111",
+            boxShadow: "10px 10px 0 #111",
           }}
         >
-          Un peloton de copains dans un champ 🌾
+          Électro qui tape · Rock qui transpire · Pop qui colle
         </div>
       </div>
     ),

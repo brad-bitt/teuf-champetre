@@ -1,6 +1,10 @@
+import type { Metadata } from "next";
+import { cache } from "react";
 import FestivalSite from "@/components/FestivalSite";
 import { fetchFestivalData } from "@/lib/data";
 import { DEMO_DATA } from "@/lib/demo-data";
+import { parseFestivalDates } from "@/lib/festival-dates";
+import { SITE_NAME, SITE_URL } from "@/lib/site";
 import { getServerSupabase } from "@/lib/supabase";
 
 // Page servie depuis le cache et régénérée au plus toutes les 60 s : le public
@@ -8,16 +12,16 @@ import { getServerSupabase } from "@/lib/supabase";
 // le refresh client de FestivalSite (fetch direct Supabase).
 export const revalidate = 60;
 
-export default async function Page() {
+/**
+ * Chargement partagé entre generateMetadata et la page : cache() garantit une
+ * seule requête Supabase par rendu.
+ */
+const loadFestival = cache(async () => {
   const supabase = getServerSupabase();
-
-  let data = DEMO_DATA;
-  let demoMode = true;
 
   if (supabase) {
     try {
-      data = await fetchFestivalData(supabase);
-      demoMode = false;
+      return { data: await fetchFestivalData(supabase), demoMode: false };
     } catch (e) {
       // Supabase configuré mais indisponible / migrations pas encore appliquées :
       // on retombe sur la démo pour ne jamais afficher une page cassée.
@@ -25,5 +29,94 @@ export default async function Page() {
     }
   }
 
-  return <FestivalSite initialData={data} demoMode={demoMode} />;
+  return { data: DEMO_DATA, demoMode: true };
+});
+
+/** Le champ lieu peut être saisi « Lieu : X » dans le back-office — on retire le préfixe. */
+const cleanLieu = (lieu: string) => lieu.replace(/^\s*lieu\s*:\s*/i, "");
+
+/** Titre + description construits avec les vraies infos du back-office. */
+export async function generateMetadata(): Promise<Metadata> {
+  const { data } = await loadFestival();
+  const { edition, dates } = data.settings;
+  const lieu = cleanLieu(data.settings.lieu);
+
+  const title = `${SITE_NAME} — Festival entre copains · ${edition}`;
+  const description =
+    `${SITE_NAME}, le festival entre copains : ${dates}, ${lieu}. ` +
+    "Électro qui tape, rock qui transpire, pop qui colle — programmation, activités et photos, thème Tour de France.";
+
+  return {
+    title,
+    description,
+    alternates: { canonical: "/" },
+    openGraph: {
+      type: "website",
+      locale: "fr_FR",
+      url: "/",
+      siteName: SITE_NAME,
+      title,
+      description,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+    },
+  };
+}
+
+export default async function Page() {
+  const { data, demoMode } = await loadFestival();
+  const { edition, dates } = data.settings;
+  const lieu = cleanLieu(data.settings.lieu);
+
+  /**
+   * Données structurées schema.org : décrivent le festival aux moteurs de
+   * recherche — aide Google à comprendre que « Teuf Champêtre » est un
+   * événement musical. Google exige un startDate ISO (champ critique) : on le
+   * reconstruit depuis le texte libre du back-office ; si le texte n'est pas
+   * reconnu, on émet un simple schéma WebSite plutôt qu'un Event invalide.
+   */
+  const parsedDates = parseFestivalDates(dates, edition);
+  const jsonLd = parsedDates
+    ? {
+        "@context": "https://schema.org",
+        "@type": "Festival",
+        name: SITE_NAME,
+        alternateName: "Teuf Champetre",
+        description: `${SITE_NAME} ${edition} — festival de musique entre copains, ${dates}, thème Tour de France.`,
+        url: SITE_URL,
+        image: `${SITE_URL}/opengraph-image`,
+        startDate: parsedDates.startDate,
+        endDate: parsedDates.endDate,
+        eventStatus: "https://schema.org/EventScheduled",
+        eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+        organizer: { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
+        location: {
+          "@type": "Place",
+          name: lieu,
+          address: { "@type": "PostalAddress", addressCountry: "FR" },
+        },
+        performer: data.artists.map((a) => ({ "@type": "MusicGroup", name: a.name })),
+      }
+    : {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        name: SITE_NAME,
+        url: SITE_URL,
+      };
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        // `<` échappé pour qu'un nom d'artiste ne puisse pas fermer la balise script
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c"),
+        }}
+      />
+      <FestivalSite initialData={data} demoMode={demoMode} />
+    </>
+  );
 }

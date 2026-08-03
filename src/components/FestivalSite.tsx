@@ -202,7 +202,7 @@ export default function FestivalSite({ initialData, demoMode }: Props) {
       if (error) {
         alert(
           "Ajout impossible : " + error.message +
-            " (la migration 0005_infos_countdown a-t-elle été exécutée dans Supabase ?)",
+            " (la migration 0006_infos_countdown a-t-elle été exécutée dans Supabase ?)",
         );
       }
       await refresh();
@@ -396,7 +396,7 @@ export default function FestivalSite({ initialData, demoMode }: Props) {
       if (error) {
         alert(
           "Enregistrement impossible : " + error.message +
-            " (la migration 0005_infos_countdown a-t-elle été exécutée dans Supabase ?)",
+            " (la migration 0006_infos_countdown a-t-elle été exécutée dans Supabase ?)",
         );
       }
       setSettingsOpen(false);

@@ -27,9 +27,9 @@ export async function fetchFestivalData(supabase: SupabaseClient): Promise<Festi
   if (activitiesRes.error) {
     console.error("Activités indisponibles (migration 0003 exécutée ?) :", activitiesRes.error.message);
   }
-  // Même tolérance pour les infos pratiques (migration 0005).
+  // Même tolérance pour les infos pratiques (migration 0006).
   if (infosRes.error) {
-    console.error("Infos pratiques indisponibles (migration 0005 exécutée ?) :", infosRes.error.message);
+    console.error("Infos pratiques indisponibles (migration 0006 exécutée ?) :", infosRes.error.message);
   }
 
   const photos: Photo[] = (photosRes.data ?? [])

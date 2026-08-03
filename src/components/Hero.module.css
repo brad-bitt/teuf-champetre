@@ -77,6 +77,18 @@
   transform: translate(8px, 8px);
 }
 
+/* CTA secondaire « Faire un don » — même gabarit, jaune pour rester derrière
+   la billetterie dans la hiérarchie visuelle */
+.ctaDon {
+  composes: cta;
+  background: var(--yellow);
+  color: var(--ink);
+}
+.ctaDon:hover {
+  background: var(--ink);
+  color: var(--yellow);
+}
+
 .place {
   display: flex;
   align-items: center;

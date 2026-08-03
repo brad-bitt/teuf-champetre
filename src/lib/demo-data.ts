@@ -11,6 +11,7 @@ export const DEMO_DATA: FestivalData = {
     dates: "22–23 août",
     lieu: "Le grand champ, quelque part en campagne",
     billetterie_url: "#billetterie-bientot",
+    don_url: "https://www.helloasso.com/associations/le-bouquet/formulaires/1",
     event_start: "2026-08-22T18:00:00+02:00",
   },
   artists: [
