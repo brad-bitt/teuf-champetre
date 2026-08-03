@@ -1,4 +1,5 @@
 import type { Settings } from "@/lib/types";
+import Countdown from "./Countdown";
 import styles from "./Hero.module.css";
 
 export default function Hero({ settings }: { settings: Settings }) {
@@ -17,6 +18,7 @@ export default function Hero({ settings }: { settings: Settings }) {
           Cette année on enfile le maillot : la Teuf passe en mode Tour de France. Électro qui
           tape, rock qui transpire, pop qui colle — et un peloton de copains dans un champ.
         </p>
+        <Countdown target={settings.event_start} />
         <div className={styles.ctaRow}>
           <a
             href={settings.billetterie_url}

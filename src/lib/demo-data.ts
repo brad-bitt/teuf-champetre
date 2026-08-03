@@ -11,6 +11,7 @@ export const DEMO_DATA: FestivalData = {
     dates: "22–23 août",
     lieu: "Le grand champ, quelque part en campagne",
     billetterie_url: "#billetterie-bientot",
+    event_start: "2026-08-22T18:00:00+02:00",
   },
   artists: [
     { id: "demo-1", name: "Bétonnière Sonore", genre: "Électro", slot: "Samedi · 23h30", spotify: null, soundcloud: null, instagram: null, position: 0 },
@@ -25,6 +26,11 @@ export const DEMO_DATA: FestivalData = {
     { id: "demo-a2", name: "Loto des champs",     slot: "Samedi · 17h00",   place: "La grange",         position: 1 },
     { id: "demo-a3", name: "Tournoi de pétanque", slot: "Dimanche · 11h00", place: "Terrain du haut",   position: 2 },
     { id: "demo-a4", name: "Chasse au trésor",    slot: "Vendredi · 18h30", place: "Tout le champ",     position: 3 },
+  ],
+  infos: [
+    { id: "demo-i1", emoji: "🚗", title: "Accès",     body: "À 45 min de la ville, parking dans le pré d'à côté. Covoiturage fortement encouragé — le peloton roule groupé !", position: 0 },
+    { id: "demo-i2", emoji: "⛺", title: "Camping",   body: "Plante ta tente où tu veux dans le champ du haut. Réveil au chant du coq garanti, café offert aux lève-tôt.", position: 1 },
+    { id: "demo-i3", emoji: "🎒", title: "À apporter", body: "Gourde, crème solaire, lampe frontale et ta plus belle tenue de cycliste. Laisse le verre à la maison.", position: 2 },
   ],
   photos: PLACEHOLDER_LABELS(),
 };
@@ -42,6 +48,7 @@ function PLACEHOLDER_LABELS() {
     publicId: "",
     label,
     url: null,
+    srcSet: null,
     largeUrl: null,
     position: i,
   }));

@@ -26,6 +26,8 @@ export type Photo = {
   label: string;
   /** URL d'affichage optimisée — null ⇒ placeholder rayé façon maquette. */
   url: string | null;
+  /** srcset des vignettes (400/800px) pour laisser le navigateur choisir. */
+  srcSet: string | null;
   /** URL grand format pour la lightbox. */
   largeUrl: string | null;
   /** Ordre d'affichage, modifiable par drag & drop dans le back-office. */
@@ -37,12 +39,24 @@ export type Settings = {
   dates: string;
   lieu: string;
   billetterie_url: string;
+  /** Début de l'événement (ISO) pour le compte à rebours — null/absent ⇒ pas de compte à rebours. */
+  event_start?: string | null;
+};
+
+/** Une carte de la section « Infos pratiques » (accès, camping, à apporter…). */
+export type Info = {
+  id: string;
+  emoji: string;
+  title: string;
+  body: string;
+  position: number;
 };
 
 export type FestivalData = {
   settings: Settings;
   artists: Artist[];
   activities: Activity[];
+  infos: Info[];
   photos: Photo[];
 };
 

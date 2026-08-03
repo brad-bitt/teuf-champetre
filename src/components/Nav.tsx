@@ -14,6 +14,9 @@ export default function Nav({ billetterieUrl }: { billetterieUrl: string }) {
         <a href="#galerie" className={styles.link}>
           Photos
         </a>
+        <a href="#infos" className={styles.link}>
+          Infos
+        </a>
         <a href={billetterieUrl} target="_blank" rel="noreferrer" className={styles.ticket}>
           Billetterie ↗
         </a>
