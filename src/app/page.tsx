@@ -3,8 +3,10 @@ import { fetchFestivalData } from "@/lib/data";
 import { DEMO_DATA } from "@/lib/demo-data";
 import { getServerSupabase } from "@/lib/supabase";
 
-// Toujours rendre avec les données fraîches (le contenu est géré via le back-office)
-export const revalidate = 0;
+// Page servie depuis le cache et régénérée au plus toutes les 60 s : le public
+// a un affichage instantané, les admins voient leurs modifs tout de suite via
+// le refresh client de FestivalSite (fetch direct Supabase).
+export const revalidate = 60;
 
 export default async function Page() {
   const supabase = getServerSupabase();

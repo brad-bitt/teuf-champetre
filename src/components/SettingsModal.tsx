@@ -10,15 +10,27 @@ type Props = {
   onClose: () => void;
 };
 
+/** ISO (base) → valeur locale d'un <input type="datetime-local">. */
+function toLocalInput(iso: string | null | undefined): string {
+  if (!iso) return "";
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "";
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
 export default function SettingsModal({ settings, onSave, onClose }: Props) {
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const fd = new FormData(e.currentTarget);
+    const eventStart = String(fd.get("event_start") ?? "").trim();
     onSave({
       edition: String(fd.get("edition") ?? "").trim() || settings.edition,
       dates: String(fd.get("dates") ?? "").trim() || settings.dates,
       lieu: String(fd.get("lieu") ?? "").trim() || settings.lieu,
       billetterie_url: String(fd.get("billetterie_url") ?? "").trim() || "#billetterie-bientot",
+      // L'input est en heure locale ; on stocke en ISO. Vide ⇒ pas de compte à rebours.
+      event_start: eventStart ? new Date(eventStart).toISOString() : null,
     });
   };
 
@@ -48,6 +60,15 @@ export default function SettingsModal({ settings, onSave, onClose }: Props) {
               name="billetterie_url"
               defaultValue={settings.billetterie_url}
               placeholder="https://shotgun.live/..."
+              className={styles.input}
+            />
+          </label>
+          <label className={styles.field}>
+            Départ de la teuf (compte à rebours du hero — vide pour le masquer)
+            <input
+              type="datetime-local"
+              name="event_start"
+              defaultValue={toLocalInput(settings.event_start)}
               className={styles.input}
             />
           </label>

@@ -96,6 +96,16 @@ export default function Gallery({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lightboxOpen]);
 
+  // Précharge les grands formats voisins : la navigation ‹ › est instantanée
+  useEffect(() => {
+    if (openIndex === null || shown.length < 2) return;
+    for (const delta of [1, -1]) {
+      const neighbor = shown[(openIndex + delta + shown.length) % shown.length];
+      const url = neighbor.largeUrl ?? neighbor.url;
+      if (url) new Image().src = url;
+    }
+  }, [openIndex, shown]);
+
   const handleFiles = (e: ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files ?? []);
     if (files.length) onAdd(files);
@@ -157,7 +167,6 @@ export default function Gallery({
             tabIndex={0}
             aria-label={`Agrandir : ${photo.label || "photo"}`}
             className={`${styles.img} ${styles.clickable}`}
-            style={{ backgroundImage: `url('${photo.url}')` }}
             onClick={() => setOpenIndex(i)}
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ") {
@@ -165,7 +174,19 @@ export default function Gallery({
                 setOpenIndex(i);
               }
             }}
-          />
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={photo.url}
+              srcSet={photo.srcSet ?? undefined}
+              sizes="(max-width: 560px) 92vw, 280px"
+              alt=""
+              loading="lazy"
+              decoding="async"
+              className={styles.thumb}
+              draggable={false}
+            />
+          </div>
         ) : (
           <div className={styles.placeholder}>
             <span className={styles.placeholderLabel}>{photo.label}</span>

@@ -3,15 +3,17 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { fetchFestivalData } from "@/lib/data";
 import { getBrowserSupabase } from "@/lib/supabase";
-import type { Activity, Artist, FestivalData, Photo, Settings } from "@/lib/types";
+import type { Activity, Artist, FestivalData, Info, Photo, Settings } from "@/lib/types";
 import Activities from "./Activities";
 import AdminBanner from "./AdminBanner";
 import EditActivityModal, { type ActivityFields } from "./EditActivityModal";
 import EditArtistModal, { type ArtistFields } from "./EditArtistModal";
+import EditInfoModal, { type InfoFields } from "./EditInfoModal";
 import AdminsModal from "./AdminsModal";
 import Footer from "./Footer";
 import Gallery from "./Gallery";
 import Hero from "./Hero";
+import InfosPratiques from "./InfosPratiques";
 import LineUp from "./LineUp";
 import LoginModal from "./LoginModal";
 import Marquee from "./Marquee";
@@ -35,6 +37,7 @@ export default function FestivalSite({ initialData, demoMode }: Props) {
   const [adminsOpen, setAdminsOpen] = useState(false);
   const [editingArtist, setEditingArtist] = useState<Artist | null>(null);
   const [editingActivity, setEditingActivity] = useState<Activity | null>(null);
+  const [editingInfo, setEditingInfo] = useState<Info | null>(null);
   const [uploading, setUploading] = useState(false);
 
   const refresh = useCallback(async () => {
@@ -182,6 +185,47 @@ export default function FestivalSite({ initialData, demoMode }: Props) {
       if (!supabase || !confirm(`Supprimer ${activity.name} du programme ?`)) return;
       const { error } = await supabase.from("activities").delete().eq("id", activity.id);
       if (error) alert("Suppression impossible : " + error.message);
+      await refresh();
+    },
+    [supabase, refresh],
+  );
+
+  const addInfo = useCallback(
+    async (fields: { emoji: string; title: string; body: string }) => {
+      if (!supabase) return;
+      const { error } = await supabase.from("infos").insert({
+        emoji: fields.emoji,
+        title: fields.title,
+        body: fields.body,
+        position: data.infos.length,
+      });
+      if (error) {
+        alert(
+          "Ajout impossible : " + error.message +
+            " (la migration 0005_infos_countdown a-t-elle été exécutée dans Supabase ?)",
+        );
+      }
+      await refresh();
+    },
+    [supabase, data.infos.length, refresh],
+  );
+
+  const removeInfo = useCallback(
+    async (info: Info) => {
+      if (!supabase || !confirm(`Supprimer l'info « ${info.title} » ?`)) return;
+      const { error } = await supabase.from("infos").delete().eq("id", info.id);
+      if (error) alert("Suppression impossible : " + error.message);
+      await refresh();
+    },
+    [supabase, refresh],
+  );
+
+  const saveInfo = useCallback(
+    async (info: Info, fields: InfoFields) => {
+      if (!supabase) return;
+      const { error } = await supabase.from("infos").update(fields).eq("id", info.id);
+      if (error) alert("Mise à jour impossible : " + error.message);
+      setEditingInfo(null);
       await refresh();
     },
     [supabase, refresh],
@@ -349,7 +393,12 @@ export default function FestivalSite({ initialData, demoMode }: Props) {
     async (settings: Settings) => {
       if (!supabase) return;
       const { error } = await supabase.from("settings").upsert({ id: 1, ...settings });
-      if (error) alert("Enregistrement impossible : " + error.message);
+      if (error) {
+        alert(
+          "Enregistrement impossible : " + error.message +
+            " (la migration 0005_infos_countdown a-t-elle été exécutée dans Supabase ?)",
+        );
+      }
       setSettingsOpen(false);
       await refresh();
     },
@@ -393,6 +442,18 @@ export default function FestivalSite({ initialData, demoMode }: Props) {
         onMove={movePhoto}
         onRename={renamePhoto}
       />
+      <Marquee
+        text={"Accès ★ Camping ★ Ravitaillement ★ Carnet de route ★ Crème solaire ★ Covoiturage ★ "}
+        color="var(--yellow)"
+        reverse
+      />
+      <InfosPratiques
+        infos={data.infos}
+        adminOn={adminOn}
+        onRemove={removeInfo}
+        onEdit={setEditingInfo}
+        onAdd={addInfo}
+      />
       <Footer settings={data.settings} adminOn={adminOn} onAdminClick={handleAdminClick} />
 
       {adminOn && (
@@ -424,6 +485,13 @@ export default function FestivalSite({ initialData, demoMode }: Props) {
           activity={editingActivity}
           onSave={saveActivity}
           onClose={() => setEditingActivity(null)}
+        />
+      )}
+      {editingInfo && (
+        <EditInfoModal
+          info={editingInfo}
+          onSave={saveInfo}
+          onClose={() => setEditingInfo(null)}
         />
       )}
       {adminsOpen && supabase && (

@@ -1,5 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { photoLargeUrl, photoUrl } from "./cloudinary";
+import { photoLargeUrl, photoSrcSet, photoUrl } from "./cloudinary";
 import { DEMO_DATA } from "./demo-data";
 import type { FestivalData, Photo } from "./types";
 
@@ -9,10 +9,11 @@ import type { FestivalData, Photo } from "./types";
  * Les images elles-mêmes sont servies par Cloudinary (URL construite depuis public_id).
  */
 export async function fetchFestivalData(supabase: SupabaseClient): Promise<FestivalData> {
-  const [settingsRes, artistsRes, activitiesRes, photosRes] = await Promise.all([
+  const [settingsRes, artistsRes, activitiesRes, infosRes, photosRes] = await Promise.all([
     supabase.from("settings").select("*").eq("id", 1).maybeSingle(),
     supabase.from("artists").select("*").order("position").order("created_at"),
     supabase.from("activities").select("*").order("position").order("created_at"),
+    supabase.from("infos").select("*").order("position").order("created_at"),
     // Tri côté client : `order("position")` planterait tant que la migration
     // 0004 n'est pas passée — le fallback JS marche avant comme après.
     supabase.from("photos").select("*"),
@@ -25,6 +26,10 @@ export async function fetchFestivalData(supabase: SupabaseClient): Promise<Festi
   // exécutée : on affiche le reste du site plutôt que de tout basculer en démo.
   if (activitiesRes.error) {
     console.error("Activités indisponibles (migration 0003 exécutée ?) :", activitiesRes.error.message);
+  }
+  // Même tolérance pour les infos pratiques (migration 0005).
+  if (infosRes.error) {
+    console.error("Infos pratiques indisponibles (migration 0005 exécutée ?) :", infosRes.error.message);
   }
 
   const photos: Photo[] = (photosRes.data ?? [])
@@ -39,6 +44,7 @@ export async function fetchFestivalData(supabase: SupabaseClient): Promise<Festi
       publicId: p.public_id,
       label: p.label ?? "",
       url: photoUrl(p.public_id),
+      srcSet: photoSrcSet(p.public_id),
       largeUrl: photoLargeUrl(p.public_id),
       position: p.position ?? 0,
     }));
@@ -47,6 +53,7 @@ export async function fetchFestivalData(supabase: SupabaseClient): Promise<Festi
     settings: settingsRes.data ?? DEMO_DATA.settings,
     artists: artistsRes.data ?? [],
     activities: activitiesRes.data ?? [],
+    infos: infosRes.data ?? [],
     photos,
   };
 }
