@@ -27,6 +27,7 @@ import InfosPratiques from "./InfosPratiques";
 import LineUp from "./LineUp";
 import LoginModal from "./LoginModal";
 import Marquee from "./Marquee";
+import BellToggle from "./BellToggle";
 import Nav from "./Nav";
 import ScrollBike from "./ScrollBike";
 import SettingsModal from "./SettingsModal";
@@ -565,6 +566,7 @@ export default function FestivalSite({ initialData, demoMode }: Props) {
   return (
     <div>
       <ScrollBike />
+      <BellToggle />
       <Nav billetterieUrl={data.settings.billetterie_url} />
       <Hero settings={data.settings} />
       {sectionOrder.map((key, i) => (
