@@ -8,9 +8,10 @@ const STORAGE_KEY = "teuf-sonnette";
 
 /**
  * L'annonce « TEUF CHAMPÊTRE ! » qui claque à chaque clic sur le site, avec
- * son interrupteur 📣/🔇 (choix mémorisé dans le navigateur). Le React onClick
- * du bouton s'exécute avant l'écouteur global (attaché à window) : couper le
- * son ne crie donc pas, le réactiver crie en guise de confirmation.
+ * son interrupteur 📣/🔇 (choix mémorisé dans le navigateur). Par défaut :
+ * activé sur desktop, coupé sur téléphone/tablette (écran tactile). Le React
+ * onClick du bouton s'exécute avant l'écouteur global (attaché à window) :
+ * couper le son ne crie donc pas, le réactiver crie en guise de confirmation.
  */
 export default function BellToggle() {
   const [enabled, setEnabled] = useState(true);
@@ -19,11 +20,13 @@ export default function BellToggle() {
   // Préférence sauvegardée — lue après montage, le serveur n'a pas de localStorage
   useEffect(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved !== null) {
-      const on = saved === "on";
-      setEnabled(on);
-      enabledRef.current = on;
-    }
+    const on =
+      saved !== null
+        ? saved === "on"
+        : // Pas de choix mémorisé : coupé sur tactile, activé sur desktop
+          !window.matchMedia("(hover: none) and (pointer: coarse)").matches;
+    setEnabled(on);
+    enabledRef.current = on;
   }, []);
 
   useEffect(() => {
