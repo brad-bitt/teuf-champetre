@@ -2,6 +2,19 @@
   background: var(--ink);
   color: var(--bg);
   padding: 0 20px 24px;
+  position: relative;
+}
+
+/* Le fanion du dernier kilomètre, pendu au damier (survole-le !) */
+.flammeRouge {
+  position: absolute;
+  top: 22px;
+  right: 12%;
+  width: 30px;
+  height: 36px;
+  background: var(--orange);
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  transform: rotate(2deg);
 }
 
 /* Damier pleine largeur au sommet du footer (compense le padding latéral) */

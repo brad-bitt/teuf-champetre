@@ -1,7 +1,23 @@
-/* Flèches ↑↓ de réorganisation des sections (mode admin uniquement) */
+/* Enveloppe de section : ancre les stickers déco et les flèches admin */
 
 .wrap {
   position: relative;
+}
+
+/* Stickers champêtres posés dans les zones de padding des sections */
+.sticker {
+  position: absolute;
+  font-size: clamp(28px, 3.4vw, 42px);
+  line-height: 1;
+  pointer-events: none;
+  filter: drop-shadow(3px 3px 0 rgba(17, 17, 17, 0.85));
+  z-index: 2;
+}
+
+@media (max-width: 720px) {
+  .sticker {
+    display: none;
+  }
 }
 
 .arrows {

@@ -1,0 +1,20 @@
+/* Piste invisible collée à la bordure basse de la nav (le trait noir = la route) */
+.track {
+  --p: 0;
+  position: absolute;
+  left: 10px;
+  right: 34px; /* laisse le vélo finir juste avant le bord */
+  bottom: -4px; /* posé sur la bordure de 4px de la nav */
+  height: 0;
+  pointer-events: none;
+}
+
+.bike {
+  position: absolute;
+  left: calc(var(--p) * 100%);
+  bottom: 1px;
+  font-size: 21px;
+  line-height: 1;
+  /* L'emoji regarde à gauche : on le retourne pour rouler vers l'arrivée */
+  transform: translateX(-50%) scaleX(-1);
+}
