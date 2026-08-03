@@ -132,3 +132,33 @@
   transform: rotate(-8deg);
   z-index: 0;
 }
+
+/* Le vélo pédale, le soleil respire — coupé si l'utilisateur réduit les animations */
+@media (prefers-reduced-motion: no-preference) {
+  .bike {
+    animation: heroRide 2.4s ease-in-out infinite;
+  }
+  .sun {
+    animation: heroShine 6s ease-in-out infinite;
+  }
+}
+
+@keyframes heroRide {
+  0%,
+  100% {
+    transform: rotate(-8deg) translateY(0);
+  }
+  50% {
+    transform: rotate(-5deg) translateY(-5px);
+  }
+}
+
+@keyframes heroShine {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.06);
+  }
+}

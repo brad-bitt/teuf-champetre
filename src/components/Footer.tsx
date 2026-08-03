@@ -12,8 +12,13 @@ type Props = {
 export default function Footer({ settings, adminOn, onAdminClick }: Props) {
   return (
     <footer className={styles.footer}>
-      {/* La ligne d'arrivée, forcément en damier */}
+      {/* La ligne d'arrivée, forcément en damier — et sa flamme rouge */}
       <div className={styles.finishLine} aria-hidden="true" />
+      <div
+        className={styles.flammeRouge}
+        aria-hidden="true"
+        title="Flamme rouge — dernier kilomètre !"
+      />
       <div className={styles.inner}>
         <div className={styles.topRow}>
           <div className={styles.bigText}>On se voit sur la ligne d&apos;arrivée ?</div>

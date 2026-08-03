@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
 import { fetchFestivalData } from "@/lib/data";
+import { SECTION_STICKERS } from "@/lib/deco";
 import { getBrowserSupabase } from "@/lib/supabase";
 import {
   parseSectionOrder,
@@ -512,8 +513,13 @@ export default function FestivalSite({ initialData, demoMode }: Props) {
       <Nav billetterieUrl={data.settings.billetterie_url} />
       <Hero settings={data.settings} />
       {sectionOrder.map((key, i) => (
-        <div key={key} className={adminOn ? sectionStyles.wrap : undefined}>
+        <div key={key} className={sectionStyles.wrap}>
           {sections[key]}
+          {SECTION_STICKERS[key].map((s) => (
+            <span key={s.emoji} className={sectionStyles.sticker} style={s.style} aria-hidden="true">
+              {s.emoji}
+            </span>
+          ))}
           {adminOn && (
             <div className={sectionStyles.arrows}>
               <button
