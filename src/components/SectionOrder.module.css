@@ -1,0 +1,33 @@
+/* Flèches ↑↓ de réorganisation des sections (mode admin uniquement) */
+
+.wrap {
+  position: relative;
+}
+
+.arrows {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  display: flex;
+  gap: 6px;
+  z-index: 5;
+}
+
+.btn {
+  border: 3px solid var(--ink);
+  background: var(--yellow);
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 6px 10px;
+  box-shadow: 3px 3px 0 var(--ink);
+}
+.btn:hover:not(:disabled) {
+  transform: translate(1px, 1px);
+  box-shadow: 2px 2px 0 var(--ink);
+}
+.btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}

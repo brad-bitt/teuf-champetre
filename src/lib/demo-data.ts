@@ -13,6 +13,7 @@ export const DEMO_DATA: FestivalData = {
     billetterie_url: "#billetterie-bientot",
     don_url: "https://www.helloasso.com/associations/le-bouquet/formulaires/1",
     event_start: "2026-08-22T18:00:00+02:00",
+    section_order: "lineup,activities,infos,gallery",
   },
   artists: [
     { id: "demo-1", name: "Bétonnière Sonore", genre: "Électro", slot: "Samedi · 23h30", spotify: null, soundcloud: null, instagram: null, position: 0 },

@@ -1,9 +1,18 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
 import { fetchFestivalData } from "@/lib/data";
 import { getBrowserSupabase } from "@/lib/supabase";
-import type { Activity, Artist, FestivalData, Info, Photo, Settings } from "@/lib/types";
+import {
+  parseSectionOrder,
+  type Activity,
+  type Artist,
+  type FestivalData,
+  type Info,
+  type Photo,
+  type SectionKey,
+  type Settings,
+} from "@/lib/types";
 import Activities from "./Activities";
 import AdminBanner from "./AdminBanner";
 import EditActivityModal, { type ActivityFields } from "./EditActivityModal";
@@ -19,6 +28,7 @@ import LoginModal from "./LoginModal";
 import Marquee from "./Marquee";
 import Nav from "./Nav";
 import SettingsModal from "./SettingsModal";
+import sectionStyles from "./SectionOrder.module.css";
 
 type Props = {
   initialData: FestivalData;
@@ -405,55 +415,131 @@ export default function FestivalSite({ initialData, demoMode }: Props) {
     [supabase, refresh],
   );
 
+  const sectionOrder = parseSectionOrder(data.settings.section_order);
+
+  /** Monte/descend une section : affichage immédiat, persistance ensuite. */
+  const moveSection = useCallback(
+    async (from: number, to: number) => {
+      if (!supabase || to < 0 || to >= sectionOrder.length) return;
+      const order = [...sectionOrder];
+      const [moved] = order.splice(from, 1);
+      order.splice(to, 0, moved);
+      const joined = order.join(",");
+      setData((d) => ({ ...d, settings: { ...d.settings, section_order: joined } }));
+
+      const { error } = await supabase
+        .from("settings")
+        .update({ section_order: joined })
+        .eq("id", 1);
+      if (error) {
+        alert(
+          "Réorganisation impossible : " + error.message +
+            " (la migration 0007_section_order a-t-elle été exécutée dans Supabase ?)",
+        );
+      }
+      await refresh();
+    },
+    [supabase, sectionOrder, refresh],
+  );
+
+  // Chaque section emporte son bandeau défilant quand on la déplace.
+  const sections: Record<SectionKey, ReactNode> = {
+    lineup: (
+      <>
+          <Marquee />
+          <LineUp
+            artists={data.artists}
+            adminOn={adminOn}
+            onRemove={removeArtist}
+            onEdit={setEditingArtist}
+            onAdd={addArtist}
+          />
+      </>
+    ),
+    activities: (
+      <>
+          <Marquee
+            text={"Bingo ★ Loto ★ Pétanque ★ Ravitaillement ★ Chasse au trésor ★ Buvette ★ Zone de récup ★ "}
+            color="var(--blue)"
+            reverse
+          />
+          <Activities
+            activities={data.activities}
+            adminOn={adminOn}
+            onRemove={removeActivity}
+            onEdit={setEditingActivity}
+            onAdd={addActivity}
+          />
+      </>
+    ),
+    gallery: (
+      <>
+          <Marquee
+            text={"Flash ★ Pogo ★ Golden hour ★ Souvenirs ★ Confettis ★ Pellicule ★ Photo finish ★ "}
+            color="var(--green)"
+          />
+          <Gallery
+            photos={data.photos}
+            adminOn={adminOn}
+            uploading={uploading}
+            onRemove={removePhoto}
+            onAdd={addPhotos}
+            onMove={movePhoto}
+            onRename={renamePhoto}
+          />
+      </>
+    ),
+    infos: (
+      <>
+          <Marquee
+            text={"Accès ★ Camping ★ Ravitaillement ★ Carnet de route ★ Crème solaire ★ Covoiturage ★ "}
+            color="var(--yellow)"
+            reverse
+          />
+          <InfosPratiques
+            infos={data.infos}
+            adminOn={adminOn}
+            onRemove={removeInfo}
+            onEdit={setEditingInfo}
+            onAdd={addInfo}
+          />
+      </>
+    ),
+  };
+
   return (
     <div>
       <Nav billetterieUrl={data.settings.billetterie_url} />
       <Hero settings={data.settings} />
-      <Marquee />
-      <LineUp
-        artists={data.artists}
-        adminOn={adminOn}
-        onRemove={removeArtist}
-        onEdit={setEditingArtist}
-        onAdd={addArtist}
-      />
-      <Marquee
-        text={"Bingo ★ Loto ★ Pétanque ★ Ravitaillement ★ Chasse au trésor ★ Buvette ★ Zone de récup ★ "}
-        color="var(--blue)"
-        reverse
-      />
-      <Activities
-        activities={data.activities}
-        adminOn={adminOn}
-        onRemove={removeActivity}
-        onEdit={setEditingActivity}
-        onAdd={addActivity}
-      />
-      <Marquee
-        text={"Flash ★ Pogo ★ Golden hour ★ Souvenirs ★ Confettis ★ Pellicule ★ Photo finish ★ "}
-        color="var(--green)"
-      />
-      <Gallery
-        photos={data.photos}
-        adminOn={adminOn}
-        uploading={uploading}
-        onRemove={removePhoto}
-        onAdd={addPhotos}
-        onMove={movePhoto}
-        onRename={renamePhoto}
-      />
-      <Marquee
-        text={"Accès ★ Camping ★ Ravitaillement ★ Carnet de route ★ Crème solaire ★ Covoiturage ★ "}
-        color="var(--yellow)"
-        reverse
-      />
-      <InfosPratiques
-        infos={data.infos}
-        adminOn={adminOn}
-        onRemove={removeInfo}
-        onEdit={setEditingInfo}
-        onAdd={addInfo}
-      />
+      {sectionOrder.map((key, i) => (
+        <div key={key} className={adminOn ? sectionStyles.wrap : undefined}>
+          {sections[key]}
+          {adminOn && (
+            <div className={sectionStyles.arrows}>
+              <button
+                type="button"
+                className={sectionStyles.btn}
+                disabled={i === 0}
+                onClick={() => moveSection(i, i - 1)}
+                aria-label="Monter la section"
+                title="Monter la section"
+              >
+                ↑
+              </button>
+              <button
+                type="button"
+                className={sectionStyles.btn}
+                disabled={i === sectionOrder.length - 1}
+                onClick={() => moveSection(i, i + 1)}
+                aria-label="Descendre la section"
+                title="Descendre la section"
+              >
+                ↓
+              </button>
+            </div>
+          )}
+        </div>
+      ))}
       <Footer settings={data.settings} adminOn={adminOn} onAdminClick={handleAdminClick} />
 
       {adminOn && (
