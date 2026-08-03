@@ -107,3 +107,18 @@ body::-webkit-scrollbar {
   width: 0;
   height: 0;
 }
+
+/* Curseur vélo (folklore de l'édition — voir src/lib/deco.ts pour le reste).
+   Les éléments cliquables gardent leur curseur main, les champs leur curseur
+   texte : seul le curseur « par défaut » devient un vélo. */
+html,
+body {
+  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32'><text y='25' font-size='25'>%F0%9F%9A%B4</text></svg>")
+      6 16,
+    auto;
+}
+input,
+textarea,
+select {
+  cursor: auto;
+}

@@ -41,6 +41,8 @@ export default function Gallery({
   // pas de téléchargement de vignettes pour qui ne déplie jamais.
   const [everOpened, setEverOpened] = useState(false);
   const [openIndex, setOpenIndex] = useState<number | null>(null);
+  // Grand format en cours de chargement ⇒ vinyle qui tourne dans la lightbox
+  const [lightboxLoading, setLightboxLoading] = useState(false);
   const [dragIndex, setDragIndex] = useState<number | null>(null);
   const [overIndex, setOverIndex] = useState<number | null>(null);
 
@@ -68,6 +70,11 @@ export default function Gallery({
   const openPhoto = openIndex === null ? null : shown[openIndex];
   const step = (delta: number) =>
     setOpenIndex((i) => (i === null ? i : (i + delta + shown.length) % shown.length));
+
+  // Chaque photo ouverte repart en « chargement » jusqu'à son onLoad
+  useEffect(() => {
+    if (openIndex !== null) setLightboxLoading(true);
+  }, [openIndex]);
 
   const expand = () => {
     setEverOpened(true);
@@ -311,11 +318,19 @@ export default function Gallery({
               ‹
             </button>
           )}
+          {lightboxLoading && (
+            <div className={styles.vinyl} aria-hidden="true">
+              <span className={styles.vinylDot} />
+            </div>
+          )}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
+            key={openPhoto.id}
             src={openPhoto.largeUrl ?? openPhoto.url}
             alt={openPhoto.label || "Photo de la Teuf"}
-            className={styles.lightboxImg}
+            className={`${styles.lightboxImg} ${lightboxLoading ? styles.lightboxImgLoading : ""}`}
+            onLoad={() => setLightboxLoading(false)}
+            onError={() => setLightboxLoading(false)}
             onClick={(e) => e.stopPropagation()}
           />
           {shown.length > 1 && (
