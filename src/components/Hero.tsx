@@ -1,20 +1,36 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import { burstConfetti } from "@/lib/confetti";
+import { initFeteMode, isFeteMode, toggleFeteMode } from "@/lib/fete";
 import type { Settings } from "@/lib/types";
 import Countdown from "./Countdown";
 import styles from "./Hero.module.css";
 
 export default function Hero({ settings }: { settings: Settings }) {
+  const [feteOn, setFeteOn] = useState(false);
+
+  // Restaure le mode fête mémorisé (après montage : pas de localStorage côté serveur)
+  useEffect(() => {
+    initFeteMode();
+    setFeteOn(isFeteMode());
+  }, []);
+
   return (
     <header className={styles.hero}>
       <div className={styles.inner}>
         <div className={styles.badge}>
           {settings.edition} · {settings.dates} · 🚴 Thème vélo
         </div>
-        {/* Petit plaisir caché : le titre explose en confettis au clic */}
+        {/* Le titre allume/éteint le mode fête — confettis à l'allumage */}
         <h1
           className={styles.title}
-          onClick={(e) => burstConfetti(e.clientX, e.clientY)}
-          title="Clique !"
+          onClick={(e) => {
+            const on = toggleFeteMode();
+            setFeteOn(on);
+            if (on) burstConfetti(e.clientX, e.clientY);
+          }}
+          title={feteOn ? "Rallumer les lumières ☀️" : "Éteindre les lumières, que la teuf commence ! 🌙"}
         >
           Teuf
           <br />

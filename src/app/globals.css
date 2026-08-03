@@ -121,3 +121,53 @@ body::-webkit-scrollbar {
       6 16,
     auto !important;
 }
+
+/* ——— Mode fête (clic sur le titre du hero) ———
+   La nuit tombe sur le site : un voile sombre multiplie les couleurs, et des
+   projecteurs colorés balayent lentement la page par-dessus. Deux calques
+   fixes sous les modales (lightbox et bandeau admin restent en pleine
+   lumière, z-index 100+). */
+
+html[data-fete] body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: rgba(18, 8, 38, 0.5);
+  mix-blend-mode: multiply;
+  pointer-events: none;
+  z-index: 90;
+}
+
+html[data-fete] body::before {
+  content: "";
+  position: fixed;
+  inset: -20%;
+  background:
+    radial-gradient(closest-side at 22% 18%, rgba(255, 95, 168, 0.4), transparent 62%),
+    radial-gradient(closest-side at 78% 32%, rgba(158, 203, 255, 0.34), transparent 60%),
+    radial-gradient(closest-side at 45% 78%, rgba(166, 224, 90, 0.3), transparent 62%),
+    radial-gradient(closest-side at 88% 85%, rgba(255, 210, 63, 0.28), transparent 58%);
+  mix-blend-mode: screen;
+  pointer-events: none;
+  z-index: 91;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html[data-fete] body::before {
+    animation: feteLights 14s ease-in-out infinite alternate;
+  }
+}
+
+@keyframes feteLights {
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+    filter: hue-rotate(0deg);
+  }
+  50% {
+    transform: translate(4%, -3%) rotate(4deg);
+  }
+  100% {
+    transform: translate(-4%, 3%) rotate(-4deg);
+    filter: hue-rotate(50deg);
+  }
+}
