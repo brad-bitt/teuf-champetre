@@ -98,9 +98,12 @@ html[data-motion="on"] [data-reveal]:not([data-reveal="in"]) > * {
 }
 
 /* Barre de scroll native masquée : le cycliste du bord droit sert de repère
-   de progression (le scroll molette/clavier/tactile fonctionne normalement). */
+   de progression (le scroll molette/clavier/tactile fonctionne normalement).
+   overflow-x clip : les pastilles qui dépassent des bords ne créent pas de
+   scroll horizontal (clip, et non hidden, pour ne pas casser la nav sticky). */
 html {
   scrollbar-width: none;
+  overflow-x: clip;
 }
 html::-webkit-scrollbar,
 body::-webkit-scrollbar {

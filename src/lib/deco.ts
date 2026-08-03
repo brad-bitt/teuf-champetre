@@ -31,33 +31,33 @@ type Sticker = {
 export const SECTION_STICKERS: Record<SectionKey, Sticker[]> = {
   // Section jaune
   lineup: [
-    { emoji: "🌻", bg: "var(--pink)", size: 78, style: { top: "9%", left: -26, transform: "rotate(-10deg)" } },
-    { emoji: "🍄", bg: "var(--cream)", size: 52, style: { top: "34%", right: "5%", transform: "rotate(8deg)" } },
-    { emoji: "🌾", bg: "var(--blue)", size: 56, style: { top: "62%", right: "2%", transform: "rotate(-7deg)" } },
+    { emoji: "🌻", bg: "var(--pink)", size: 120, style: { top: "9%", left: -26, transform: "rotate(-10deg)" } },
+    { emoji: "🍄", bg: "var(--cream)", size: 56, style: { top: "34%", right: "5%", transform: "rotate(8deg)" } },
+    { emoji: "🌾", bg: "var(--blue)", size: 84, style: { top: "62%", right: "2%", transform: "rotate(-7deg)" } },
     { emoji: "🏆", bg: "var(--green)", size: 66, style: { bottom: "11%", left: "3%", transform: "rotate(6deg)" } },
-    { emoji: "🌼", bg: "var(--cream)", size: 42, style: { top: "48%", left: "5%", transform: "rotate(12deg)" } },
+    { emoji: "🌼", bg: "var(--cream)", size: 44, style: { top: "48%", left: "5%", transform: "rotate(12deg)" } },
   ],
   // Section bleue
   activities: [
-    { emoji: "🍄", bg: "var(--yellow)", size: 88, style: { top: "24%", right: -32, transform: "rotate(10deg)" } },
-    { emoji: "🌼", bg: "var(--cream)", size: 54, style: { top: "14%", left: "3%", transform: "rotate(-11deg)" } },
-    { emoji: "🌾", bg: "var(--pink)", size: 46, style: { top: "58%", left: "6%", transform: "rotate(-8deg)" } },
-    { emoji: "🌻", bg: "var(--green)", size: 62, style: { bottom: "12%", right: "5%", transform: "rotate(7deg)" } },
+    { emoji: "🍄", bg: "var(--yellow)", size: 132, style: { top: "24%", right: -32, transform: "rotate(10deg)" } },
+    { emoji: "🌼", bg: "var(--cream)", size: 52, style: { top: "14%", left: "3%", transform: "rotate(-11deg)" } },
+    { emoji: "🌾", bg: "var(--pink)", size: 74, style: { top: "58%", left: "6%", transform: "rotate(-8deg)" } },
+    { emoji: "🌻", bg: "var(--green)", size: 60, style: { bottom: "12%", right: "5%", transform: "rotate(7deg)" } },
   ],
   // Section orange
   infos: [
-    { emoji: "🚜", bg: "var(--cream)", size: 70, style: { top: "13%", left: "4%", transform: "rotate(-6deg)" } },
-    { emoji: "🌾", bg: "var(--blue)", size: 60, style: { top: "38%", right: -24, transform: "rotate(9deg)" } },
-    { emoji: "🍄", bg: "var(--yellow)", size: 44, style: { bottom: "17%", left: -16, transform: "rotate(-9deg)" } },
-    { emoji: "🧺", bg: "var(--green)", size: 58, style: { bottom: "31%", right: "5%", transform: "rotate(8deg)" } },
-    { emoji: "🌻", bg: "var(--pink)", size: 46, style: { top: "10%", right: "8%", transform: "rotate(-12deg)" } },
+    { emoji: "🚜", bg: "var(--cream)", size: 108, style: { top: "13%", left: "4%", transform: "rotate(-6deg)" } },
+    { emoji: "🌾", bg: "var(--blue)", size: 58, style: { top: "38%", right: -24, transform: "rotate(9deg)" } },
+    { emoji: "🍄", bg: "var(--yellow)", size: 48, style: { bottom: "17%", left: -16, transform: "rotate(-9deg)" } },
+    { emoji: "🧺", bg: "var(--green)", size: 92, style: { bottom: "31%", right: "5%", transform: "rotate(8deg)" } },
+    { emoji: "🌻", bg: "var(--pink)", size: 54, style: { top: "10%", right: "8%", transform: "rotate(-12deg)" } },
   ],
   // Section verte
   gallery: [
-    { emoji: "🌼", bg: "var(--pink)", size: 50, style: { top: "10%", right: "7%", transform: "rotate(-8deg)" } },
-    { emoji: "🌻", bg: "var(--yellow)", size: 58, style: { top: "22%", left: "4%", transform: "rotate(10deg)" } },
-    { emoji: "🍄", bg: "var(--cream)", size: 74, style: { top: "47%", left: -28, transform: "rotate(9deg)" } },
+    { emoji: "🌼", bg: "var(--pink)", size: 84, style: { top: "10%", right: "7%", transform: "rotate(-8deg)" } },
+    { emoji: "🌻", bg: "var(--yellow)", size: 56, style: { top: "22%", left: "4%", transform: "rotate(10deg)" } },
+    { emoji: "🍄", bg: "var(--cream)", size: 124, style: { top: "47%", left: -28, transform: "rotate(9deg)" } },
     { emoji: "🍄", bg: "var(--blue)", size: 46, style: { bottom: "28%", right: "4%", transform: "rotate(-9deg)" } },
-    { emoji: "🚵", bg: "var(--yellow)", size: 62, style: { bottom: "7%", right: -22, transform: "rotate(6deg)" } },
+    { emoji: "🚵", bg: "var(--yellow)", size: 72, style: { bottom: "7%", right: -22, transform: "rotate(6deg)" } },
   ],
 };
