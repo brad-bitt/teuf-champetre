@@ -43,7 +43,38 @@ export type Settings = {
   don_url: string;
   /** Début de l'événement (ISO) pour le compte à rebours — null/absent ⇒ pas de compte à rebours. */
   event_start?: string | null;
+  /** Ordre des sections, clés séparées par des virgules — voir parseSectionOrder. */
+  section_order?: string;
 };
+
+/** Sections réordonnables de la page (le hero et le footer restent fixes). */
+export const SECTION_KEYS = ["lineup", "activities", "infos", "gallery"] as const;
+export type SectionKey = (typeof SECTION_KEYS)[number];
+
+/** Ordre par défaut : les infos pratiques avant les photos. */
+export const DEFAULT_SECTION_ORDER: readonly SectionKey[] = ["lineup", "activities", "infos", "gallery"];
+
+/**
+ * Ordre des sections depuis settings.section_order (« lineup,activities,… »).
+ * Tolérant (migration 0007 absente, valeur corrompue) : clés inconnues ignorées,
+ * doublons retirés, sections manquantes ré-ajoutées à la fin — les 4 sections
+ * sont toujours rendues exactement une fois.
+ */
+export function parseSectionOrder(raw: string | null | undefined): SectionKey[] {
+  const seen = new Set<SectionKey>();
+  const order: SectionKey[] = [];
+  for (const token of (raw ?? "").split(",")) {
+    const key = token.trim() as SectionKey;
+    if (SECTION_KEYS.includes(key) && !seen.has(key)) {
+      seen.add(key);
+      order.push(key);
+    }
+  }
+  for (const key of DEFAULT_SECTION_ORDER) {
+    if (!seen.has(key)) order.push(key);
+  }
+  return order;
+}
 
 /** Une carte de la section « Infos pratiques » (accès, camping, à apporter…). */
 export type Info = {

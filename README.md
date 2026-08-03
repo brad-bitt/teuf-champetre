@@ -44,10 +44,13 @@ npm run dev          # → http://localhost:3000 (mode démo sans .env.local)
 1. **Créer le projet** — [supabase.com](https://supabase.com) → *New project* (plan gratuit).
 2. **Créer le schéma** — dashboard → *SQL Editor* → colle et exécute :
    1. [`supabase/migrations/0001_init.sql`](supabase/migrations/0001_init.sql) (tables + sécurité RLS)
-   2. [`supabase/migrations/0006_infos_countdown.sql`](supabase/migrations/0006_infos_countdown.sql)
-      (infos pratiques + compte à rebours — les migrations 0002 à 0004 sont déjà incluses
-      dans `0001_init.sql` pour un projet neuf)
-   3. [`supabase/seed.sql`](supabase/seed.sql) (infos par défaut + line-up d'attente)
+   2. [`supabase/migrations/0005_don_url.sql`](supabase/migrations/0005_don_url.sql) (bouton don HelloAsso)
+   3. [`supabase/migrations/0006_infos_countdown.sql`](supabase/migrations/0006_infos_countdown.sql)
+      (infos pratiques + compte à rebours)
+   4. [`supabase/migrations/0007_section_order.sql`](supabase/migrations/0007_section_order.sql)
+      (ordre des sections réordonnable en mode admin)
+      — les migrations 0002 à 0004 sont déjà incluses dans `0001_init.sql` pour un projet neuf
+   5. [`supabase/seed.sql`](supabase/seed.sql) (infos par défaut + line-up d'attente)
 3. **Déclarer ton email admin** — toujours dans le SQL Editor :
    ```sql
    insert into public.admins (email) values ('ton-email@gmail.com');
