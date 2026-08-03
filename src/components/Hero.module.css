@@ -37,6 +37,9 @@
   margin: 0;
   text-transform: uppercase;
   letter-spacing: -2px;
+  /* Le clic déclenche les confettis */
+  cursor: pointer;
+  width: fit-content;
 }
 
 .lede {
@@ -137,6 +140,12 @@
 @media (prefers-reduced-motion: no-preference) {
   .bike {
     animation: heroRide 2.4s ease-in-out infinite;
+    transition: right 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  /* Au survol : sprint — pédalage frénétique et bond en avant */
+  .bike:hover {
+    animation-duration: 0.5s;
+    right: 132px;
   }
   .sun {
     animation: heroShine 6s ease-in-out infinite;
