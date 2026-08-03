@@ -84,6 +84,59 @@ export default function FestivalSite({ initialData, demoMode }: Props) {
     return () => observer.disconnect();
   }, [data]);
 
+  // Les pastilles esquivent la souris : une seule écoute mousemove (rAF),
+  // poussée proportionnelle à la proximité, amortie par la transition CSS.
+  // Coupé sans souris (tactile) et si l'utilisateur réduit les animations.
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (!window.matchMedia("(pointer: fine)").matches) return;
+
+    const RADIUS = 150; // distance à laquelle la pastille commence à fuir
+    const PUSH = 70; // déplacement maximum en px
+    const offsets = new WeakMap<Element, { x: number; y: number }>();
+    let mx = -10_000;
+    let my = -10_000;
+    let raf = 0;
+
+    const tick = () => {
+      raf = 0;
+      document.querySelectorAll<HTMLElement>("[data-dodge]").forEach((el) => {
+        const cur = offsets.get(el) ?? { x: 0, y: 0 };
+        const rect = el.getBoundingClientRect();
+        // Centre « au repos » : on retranche la translation réellement rendue
+        // (en cours de transition, elle diffère de la cible posée en style)
+        const rendered = getComputedStyle(el).transform;
+        const m = rendered && rendered !== "none" ? new DOMMatrix(rendered) : { e: 0, f: 0 };
+        const cx = rect.left + rect.width / 2 - m.e;
+        const cy = rect.top + rect.height / 2 - m.f;
+        const dx = cx - mx;
+        const dy = cy - my;
+        const dist = Math.hypot(dx, dy);
+        let x = 0;
+        let y = 0;
+        if (dist > 0 && dist < RADIUS) {
+          const force = ((RADIUS - dist) / RADIUS) * PUSH;
+          x = (dx / dist) * force;
+          y = (dy / dist) * force;
+        }
+        if (x !== cur.x || y !== cur.y) {
+          offsets.set(el, { x, y });
+          el.style.transform = `translate(${x}px, ${y}px)`;
+        }
+      });
+    };
+    const onMove = (e: MouseEvent) => {
+      mx = e.clientX;
+      my = e.clientY;
+      if (!raf) raf = requestAnimationFrame(tick);
+    };
+    window.addEventListener("mousemove", onMove, { passive: true });
+    return () => {
+      window.removeEventListener("mousemove", onMove);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, []);
+
   // Connexion : quand une session apparaît (mot de passe ou retour OAuth Google),
   // on vérifie les droits admin ; sans droits, on déconnecte immédiatement.
   useEffect(() => {
@@ -517,24 +570,33 @@ export default function FestivalSite({ initialData, demoMode }: Props) {
       {sectionOrder.map((key, i) => (
         <div key={key} className={sectionStyles.wrap}>
           {sections[key]}
-          {SECTION_STICKERS[key].map((s, j) => (
-            <span
-              key={`${key}-${j}`}
-              className={sectionStyles.sticker}
-              // Délais décalés pour que les pastilles ne flottent pas en chœur
-              style={{
-                ...s.style,
-                background: s.bg,
-                width: s.size,
-                height: s.size,
-                fontSize: Math.round(s.size * 0.48),
-                animationDelay: `${((i * 2 + j) % 4) * 0.9}s`,
-              }}
-              aria-hidden="true"
-            >
-              {s.emoji}
-            </span>
-          ))}
+          {SECTION_STICKERS[key].map((s, j) => {
+            // Position sur l'enveloppe (esquive de la souris), rotation sur la
+            // pastille elle-même (sinon le transform d'esquive l'écraserait)
+            const { transform, ...position } = s.style;
+            return (
+              <span
+                key={`${key}-${j}`}
+                className={sectionStyles.stickerPos}
+                data-dodge=""
+                style={{ ...position, width: s.size, height: s.size }}
+                aria-hidden="true"
+              >
+                <span
+                  className={sectionStyles.sticker}
+                  // Délais décalés pour que les pastilles ne flottent pas en chœur
+                  style={{
+                    transform,
+                    background: s.bg,
+                    fontSize: Math.round(s.size * 0.48),
+                    animationDelay: `${((i * 2 + j) % 4) * 0.9}s`,
+                  }}
+                >
+                  {s.emoji}
+                </span>
+              </span>
+            );
+          })}
           {adminOn && (
             <div className={sectionStyles.arrows}>
               <button
