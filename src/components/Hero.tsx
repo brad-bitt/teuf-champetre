@@ -1,3 +1,4 @@
+import { burstConfetti } from "@/lib/confetti";
 import type { Settings } from "@/lib/types";
 import Countdown from "./Countdown";
 import styles from "./Hero.module.css";
@@ -9,7 +10,12 @@ export default function Hero({ settings }: { settings: Settings }) {
         <div className={styles.badge}>
           {settings.edition} · {settings.dates} · 🚴 Thème vélo
         </div>
-        <h1 className={styles.title}>
+        {/* Petit plaisir caché : le titre explose en confettis au clic */}
+        <h1
+          className={styles.title}
+          onClick={(e) => burstConfetti(e.clientX, e.clientY)}
+          title="Clique !"
+        >
           Teuf
           <br />
           Champêtre
