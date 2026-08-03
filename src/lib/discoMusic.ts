@@ -8,12 +8,8 @@ let ctx: AudioContext | null = null;
 let master: GainNode | null = null;
 let noiseBuffer: AudioBuffer | null = null;
 let timer: ReturnType<typeof setInterval> | null = null;
-let stopTimer: ReturnType<typeof setTimeout> | null = null;
 let nextTime = 0;
 let step = 0;
-
-/** Le groove est un jingle d'ouverture : il s'arrête tout seul au bout de 10 s. */
-const DUREE_MS = 10_000;
 
 const TEMPO = 118;
 const STEP = 60 / TEMPO / 2; // croches
@@ -101,7 +97,6 @@ export function startDisco() {
     step = 0;
     schedule();
     timer = setInterval(schedule, 100);
-    stopTimer = setTimeout(stopDisco, DUREE_MS);
   } catch {
     // Pas d'audio : la boule disco descendra en silence
   }
@@ -110,8 +105,6 @@ export function startDisco() {
 export function stopDisco() {
   if (timer) clearInterval(timer);
   timer = null;
-  if (stopTimer) clearTimeout(stopTimer);
-  stopTimer = null;
   // Fondu de sortie : les dernières notes programmées s'éteignent en douceur
   if (ctx && master) {
     master.gain.cancelScheduledValues(ctx.currentTime);
