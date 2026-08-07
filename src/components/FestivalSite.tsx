@@ -3,10 +3,12 @@
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
 import { fetchFestivalData } from "@/lib/data";
 import { SECTION_STICKERS } from "@/lib/deco";
+import { forgetSignup, rememberSignup } from "@/lib/inscriptions";
 import { getBrowserSupabase } from "@/lib/supabase";
 import {
   parseSectionOrder,
   type Activity,
+  type ActivitySignup,
   type Artist,
   type FestivalData,
   type Info,
@@ -314,6 +316,67 @@ export default function FestivalSite({ initialData, demoMode }: Props) {
     [supabase, refresh],
   );
 
+  // ——— Inscriptions aux activités (ouvertes à tous, pas seulement à l'admin) ———
+
+  const addSignup = useCallback(
+    async (activity: Activity, pseudo: string) => {
+      const clean = pseudo.trim();
+      if (!clean) return;
+      // Déjà inscrit sous ce pseudo ? Inutile d'aller jusqu'à la base.
+      const taken = data.signups.some(
+        (s) => s.activity_id === activity.id && s.pseudo.trim().toLowerCase() === clean.toLowerCase(),
+      );
+      if (taken) {
+        alert(`« ${clean} » est déjà inscrit à ${activity.name} !`);
+        return;
+      }
+      if (!supabase) {
+        // Mode démo : l'inscription vit dans la page, le temps de la visite
+        const signup: ActivitySignup = {
+          id: crypto.randomUUID(),
+          activity_id: activity.id,
+          pseudo: clean,
+        };
+        rememberSignup(signup.id, clean);
+        setData((d) => ({ ...d, signups: [...d.signups, signup] }));
+        return;
+      }
+      const { data: inserted, error } = await supabase
+        .from("activity_signups")
+        .insert({ activity_id: activity.id, pseudo: clean })
+        .select()
+        .single();
+      if (error) {
+        // 23505 = contrainte d'unicité : quelqu'un a pris le pseudo entre-temps
+        alert(
+          error.code === "23505"
+            ? `« ${clean} » est déjà inscrit à ${activity.name} !`
+            : "Inscription impossible : " + error.message +
+                " (la migration 0008_activity_signups a-t-elle été exécutée dans Supabase ?)",
+        );
+      } else if (inserted) {
+        rememberSignup(inserted.id, clean);
+      }
+      await refresh();
+    },
+    [supabase, data.signups, refresh],
+  );
+
+  const removeSignup = useCallback(
+    async (signup: ActivitySignup) => {
+      if (!supabase) {
+        forgetSignup(signup.id);
+        setData((d) => ({ ...d, signups: d.signups.filter((s) => s.id !== signup.id) }));
+        return;
+      }
+      const { error } = await supabase.from("activity_signups").delete().eq("id", signup.id);
+      if (error) alert("Désinscription impossible : " + error.message);
+      else forgetSignup(signup.id);
+      await refresh();
+    },
+    [supabase, refresh],
+  );
+
   const addInfo = useCallback(
     async (fields: { emoji: string; title: string; body: string }) => {
       if (!supabase) return;
@@ -579,10 +642,13 @@ export default function FestivalSite({ initialData, demoMode }: Props) {
           />
           <Activities
             activities={data.activities}
+            signups={data.signups}
             adminOn={adminOn}
             onRemove={removeActivity}
             onEdit={setEditingActivity}
             onAdd={addActivity}
+            onSignup={addSignup}
+            onUnsignup={removeSignup}
           />
       </>
     ),

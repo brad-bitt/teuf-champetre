@@ -19,6 +19,13 @@ export type Activity = {
   position: number;
 };
 
+/** Un participant inscrit à une activité (pseudo libre, sans compte). */
+export type ActivitySignup = {
+  id: string;
+  activity_id: string;
+  pseudo: string;
+};
+
 export type Photo = {
   id: string;
   /** Identifiant Cloudinary (vide pour les placeholders de démo). */
@@ -89,6 +96,7 @@ export type FestivalData = {
   settings: Settings;
   artists: Artist[];
   activities: Activity[];
+  signups: ActivitySignup[];
   infos: Info[];
   photos: Photo[];
 };
