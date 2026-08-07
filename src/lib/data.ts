@@ -9,15 +9,17 @@ import type { FestivalData, Photo } from "./types";
  * Les images elles-mêmes sont servies par Cloudinary (URL construite depuis public_id).
  */
 export async function fetchFestivalData(supabase: SupabaseClient): Promise<FestivalData> {
-  const [settingsRes, artistsRes, activitiesRes, infosRes, photosRes] = await Promise.all([
-    supabase.from("settings").select("*").eq("id", 1).maybeSingle(),
-    supabase.from("artists").select("*").order("position").order("created_at"),
-    supabase.from("activities").select("*").order("position").order("created_at"),
-    supabase.from("infos").select("*").order("position").order("created_at"),
-    // Tri côté client : `order("position")` planterait tant que la migration
-    // 0004 n'est pas passée — le fallback JS marche avant comme après.
-    supabase.from("photos").select("*"),
-  ]);
+  const [settingsRes, artistsRes, activitiesRes, signupsRes, infosRes, photosRes] =
+    await Promise.all([
+      supabase.from("settings").select("*").eq("id", 1).maybeSingle(),
+      supabase.from("artists").select("*").order("position").order("created_at"),
+      supabase.from("activities").select("*").order("position").order("created_at"),
+      supabase.from("activity_signups").select("*").order("created_at"),
+      supabase.from("infos").select("*").order("position").order("created_at"),
+      // Tri côté client : `order("position")` planterait tant que la migration
+      // 0004 n'est pas passée — le fallback JS marche avant comme après.
+      supabase.from("photos").select("*"),
+    ]);
 
   const error = settingsRes.error ?? artistsRes.error ?? photosRes.error;
   if (error) throw new Error(`Supabase: ${error.message}`);
@@ -26,6 +28,10 @@ export async function fetchFestivalData(supabase: SupabaseClient): Promise<Festi
   // exécutée : on affiche le reste du site plutôt que de tout basculer en démo.
   if (activitiesRes.error) {
     console.error("Activités indisponibles (migration 0003 exécutée ?) :", activitiesRes.error.message);
+  }
+  // Même tolérance pour les inscriptions aux activités (migration 0008).
+  if (signupsRes.error) {
+    console.error("Inscriptions indisponibles (migration 0008 exécutée ?) :", signupsRes.error.message);
   }
   // Même tolérance pour les infos pratiques (migration 0006).
   if (infosRes.error) {
@@ -53,6 +59,7 @@ export async function fetchFestivalData(supabase: SupabaseClient): Promise<Festi
     settings: settingsRes.data ?? DEMO_DATA.settings,
     artists: artistsRes.data ?? [],
     activities: activitiesRes.data ?? [],
+    signups: signupsRes.data ?? [],
     infos: infosRes.data ?? [],
     photos,
   };

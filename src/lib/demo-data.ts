@@ -29,6 +29,11 @@ export const DEMO_DATA: FestivalData = {
     { id: "demo-a3", name: "Tournoi de pétanque", slot: "Dimanche · 11h00", place: "Terrain du haut",   position: 2 },
     { id: "demo-a4", name: "Chasse au trésor",    slot: "Vendredi · 18h30", place: "Tout le champ",     position: 3 },
   ],
+  signups: [
+    { id: "demo-s1", activity_id: "demo-a3", pseudo: "Mamie Fanny" },
+    { id: "demo-s2", activity_id: "demo-a3", pseudo: "Le Boulodrome" },
+    { id: "demo-s3", activity_id: "demo-a1", pseudo: "Quine Master" },
+  ],
   infos: [
     { id: "demo-i1", emoji: "🚗", title: "Accès",     body: "À 45 min de la ville, parking dans le pré d'à côté. Covoiturage fortement encouragé — le peloton roule groupé !", position: 0 },
     { id: "demo-i2", emoji: "⛺", title: "Camping",   body: "Plante ta tente où tu veux dans le champ du haut. Réveil au chant du coq garanti, café offert aux lève-tôt.", position: 1 },

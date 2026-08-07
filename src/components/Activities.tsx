@@ -1,6 +1,7 @@
 "use client";
 
-import type { FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
+import { mySignupIds, rememberedPseudo } from "@/lib/inscriptions";
 import {
   DAY_COLORS,
   FESTIVAL_DAYS,
@@ -9,21 +10,54 @@ import {
   slotWithoutDay,
   TAG_COLORS,
   type Activity,
+  type ActivitySignup,
 } from "@/lib/types";
 import styles from "./Activities.module.css";
 
 type Props = {
   activities: Activity[];
+  signups: ActivitySignup[];
   adminOn: boolean;
   onRemove: (activity: Activity) => void;
   onEdit: (activity: Activity) => void;
   onAdd: (fields: { name: string; slot: string; place: string }) => void;
+  onSignup: (activity: Activity, pseudo: string) => void;
+  onUnsignup: (signup: ActivitySignup) => void;
 };
 
 /** Fonds des cartes, en rotation — tout sauf le bleu de la section. */
 const CARD_BGS = ["var(--cream)", "var(--yellow)", "var(--pink)", "var(--green)"];
 
-export default function Activities({ activities, adminOn, onRemove, onEdit, onAdd }: Props) {
+export default function Activities({
+  activities,
+  signups,
+  adminOn,
+  onRemove,
+  onEdit,
+  onAdd,
+  onSignup,
+  onUnsignup,
+}: Props) {
+  // Pseudo mémorisé (pré-remplit les formulaires) et inscriptions faites depuis
+  // ce navigateur (pour n'afficher « se désinscrire » que sur les siennes) —
+  // lus après montage, le serveur n'a pas de localStorage.
+  const [savedPseudo, setSavedPseudo] = useState("");
+  const [myIds, setMyIds] = useState<Set<string>>(() => new Set());
+  useEffect(() => {
+    setSavedPseudo(rememberedPseudo());
+  }, []);
+  useEffect(() => {
+    setMyIds(mySignupIds());
+  }, [signups]);
+
+  const handleSignup = (e: FormEvent<HTMLFormElement>, activity: Activity) => {
+    e.preventDefault();
+    const pseudo = String(new FormData(e.currentTarget).get("pseudo") ?? "").trim();
+    if (!pseudo) return;
+    onSignup(activity, pseudo);
+    setSavedPseudo(pseudo);
+  };
+
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const form = e.currentTarget;
@@ -56,6 +90,7 @@ export default function Activities({ activities, adminOn, onRemove, onEdit, onAd
 
   const renderCard = (activity: Activity) => {
     const i = indexOf.get(activity.id) ?? 0;
+    const participants = signups.filter((s) => s.activity_id === activity.id);
     return (
       <div
         key={activity.id}
@@ -86,6 +121,54 @@ export default function Activities({ activities, adminOn, onRemove, onEdit, onAd
         </div>
         <div className={styles.name}>{activity.name}</div>
         <div className={styles.slot}>{slotWithoutDay(activity.slot)}</div>
+
+        <div className={styles.signups}>
+          {participants.length > 0 ? (
+            <>
+              <div className={styles.signupHead}>
+                ✋ {participants.length} inscrit{participants.length > 1 ? "s" : ""}
+              </div>
+              <div className={styles.signupChips}>
+                {participants.map((s) => (
+                  <span key={s.id} className={styles.signupChip}>
+                    {s.pseudo}
+                    {(adminOn || myIds.has(s.id)) && (
+                      <button
+                        type="button"
+                        className={styles.signupRemove}
+                        onClick={() => onUnsignup(s)}
+                        aria-label={`Désinscrire ${s.pseudo} de ${activity.name}`}
+                        title="Se désinscrire"
+                      >
+                        ×
+                      </button>
+                    )}
+                  </span>
+                ))}
+              </div>
+            </>
+          ) : (
+            <div className={styles.signupEmpty}>Personne pour l&apos;instant — lance-toi !</div>
+          )}
+          <form className={styles.signupForm} onSubmit={(e) => handleSignup(e, activity)}>
+            <input
+              // Remonté quand le pseudo mémorisé change : pré-rempli au chargement
+              // et après une inscription depuis une autre carte
+              key={savedPseudo}
+              name="pseudo"
+              defaultValue={savedPseudo}
+              required
+              maxLength={30}
+              placeholder="Ton pseudo"
+              aria-label={`Ton pseudo pour ${activity.name}`}
+              className={styles.signupInput}
+            />
+            <button type="submit" className={styles.signupBtn}>
+              Je m&apos;inscris !
+            </button>
+          </form>
+        </div>
+
         {adminOn && (
           <button type="button" className={styles.editBtn} onClick={() => onEdit(activity)}>
             ✏️ Modifier
